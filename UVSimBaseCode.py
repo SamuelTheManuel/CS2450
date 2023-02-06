@@ -87,6 +87,7 @@ class UVSim:
             # passes in register contents that needs to be multiplied to accumulator.
             # leave result in the accumulator
             self.Multiply(self.memory_dict[our_register][1])
+            '''
         elif our_instruction == "40":  # calls Branch
             # I'm passing in the register that it wants to branch to, but I'm not sure what you'll need
             self.Branch(our_register)
@@ -96,6 +97,7 @@ class UVSim:
         elif our_instruction == "42":  # calls BranchZero
             # if accumulator is zero, branch. passes in the memory register.
             self.BranchZero(our_register)
+            '''
         elif our_instruction == "43":  # calls halt
             # passing in our register, but im not sure what the point would be. may not need it.
             self.Halt(our_register)  # probably supposed to end the program
