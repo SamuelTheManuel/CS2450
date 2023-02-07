@@ -74,7 +74,7 @@ class UVSim:
         elif our_instruction == "30":  # call ADD
             # passes in register contents that needs to be added to accumulator.
             # leave result in the accumulator
-            self.Add(self.memory_dict[our_register][1])
+            self.Add(self.memory_dict[our_register][1]) # FIXME: method calls for add, subtract, mulitply, and divide will result in KeyError if this dict entry hasn't yet been initialized (register is empty)
         elif our_instruction == "31":  # call Subtract
             # passes in register contents that needs to be subtracted to accumulator.
             # leave result in the accumulator
@@ -105,6 +105,41 @@ class UVSim:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
 
+    def Add(self, register_word):
+        '''Add a word from a given register in memory to the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) + int(register_word))
+        if int(new_accumulator) > 0:
+            new_accumulator = "+" + new_accumulator
+        self.accumulator = new_accumulator # store result in accumulator
+  
+    def Subtract(self, register_word):
+        '''Subtract a word from a given register in memory from the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) - int(register_word))
+        if int(new_accumulator) > 0:
+            new_accumulator = "+" + new_accumulator
+        self.accumulator = new_accumulator # store result in accumulator
+ 
+    def Multiply(self, register_word):
+        '''Multiply a word from a given register in memory by the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) * int(register_word))
+        if int(new_accumulator) > 0:
+            new_accumulator = "+" + new_accumulator
+        self.accumulator = new_accumulator # store result in accumulator
+
+    def Divide(self, register_word):
+        '''Divide the word in the accumulator by the word in a given register in memory.
+        Result is stored in the accumulator'''
+        try:
+            new_accumulator = str(int(self.accumulator) // int(register_word))
+        except ZeroDivisionError:
+            print("Unable to divide by zero.")
+            return
+        if int(new_accumulator) > 0:
+            new_accumulator = "+" + new_accumulator
+        self.accumulator = new_accumulator # store result in accumulator
 
 def main():
     uvs = UVSim()
