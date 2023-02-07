@@ -109,24 +109,30 @@ class UVSim:
         '''Add a word from a given register in memory to the word in the accumulator.
         Result is stored in the accumulator'''
         new_accumulator = str(int(self.accumulator) + int(register_word))
-        if int(new_accumulator) > 0:
+        if int(new_accumulator) >= 0:
             new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
         self.accumulator = new_accumulator # store result in accumulator
   
     def Subtract(self, register_word):
         '''Subtract a word from a given register in memory from the word in the accumulator.
         Result is stored in the accumulator'''
         new_accumulator = str(int(self.accumulator) - int(register_word))
-        if int(new_accumulator) > 0:
+        if int(new_accumulator) >= 0:
             new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
         self.accumulator = new_accumulator # store result in accumulator
  
     def Multiply(self, register_word):
         '''Multiply a word from a given register in memory by the word in the accumulator.
         Result is stored in the accumulator'''
         new_accumulator = str(int(self.accumulator) * int(register_word))
-        if int(new_accumulator) > 0:
+        if int(new_accumulator) >= 0:
             new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Divide(self, register_word):
@@ -136,9 +142,11 @@ class UVSim:
             new_accumulator = str(int(self.accumulator) // int(register_word))
         except ZeroDivisionError:
             print("Unable to divide by zero.")
-            return
-        if int(new_accumulator) > 0:
+            return "Divide by zero error"
+        if int(new_accumulator) >= 0:
             new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
         self.accumulator = new_accumulator # store result in accumulator
 
 def main():
