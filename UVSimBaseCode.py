@@ -8,28 +8,6 @@ class UVSim:
         self.instruction_amount = 0
         self.accumulator = 0  # this is our accumulator. We want to use this.w
 
-    def BranchNeg(self, register, branch_to, our_register):
-        '''Branch negative method. If accumulator is negative branch to specific 
-        register location otherwise, keep going throuhg the program as normal.'''
-        if self.accumulator < 0:
-            branch_to = our_register  #branch to specific mem location
-            return branch_to
-
-        branch_to = register + 1 #continue through instructions without branching
-                                 #it will incrament the next time around reason for +1
-        return branch_to
-
-    def BranchZero(self, register, branch_to, our_register):
-        '''Branch Zero method. If accumulator is zero branch to specific
-           register location otherwise, keep going throuhg the program as normal'''
-        if self.accumulator == 0:
-            branch_to = our_register #branch to specific mem location
-            return branch_to
-        
-        branch_to = register + 1 #continue through instructions without branching
-                                 #it will incrament the next time around reason for +1
-        return branch_to
-        
 
     def initiate_process(self, input_text):
         # loads each instruction into the corresponding register
@@ -121,12 +99,36 @@ class UVSim:
             # if accumulator is zero, branch. passes in the memory register.
             self.BranchZero(our_register)
             '''
+            
         elif our_instruction == "43":  # calls halt
             # passing in our register, but im not sure what the point would be. may not need it.
             self.Halt(our_register)  # probably supposed to end the program
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
+
+    def BranchNeg(self, register, branch_to, our_register):
+        '''Branch negative method. If accumulator is negative branch to specific 
+        register location otherwise, keep going throuhg the program as normal.'''
+        if self.accumulator < 0:
+            branch_to = our_register  #branch to specific mem location
+            return branch_to
+
+        branch_to = register + 1 #continue through instructions without branching
+                                 #it will incrament the next time around reason for +1
+        return branch_to
+
+    def BranchZero(self, register, branch_to, our_register):
+        '''Branch Zero method. If accumulator is zero branch to specific
+           register location otherwise, keep going throuhg the program as normal'''
+        if self.accumulator == 0:
+            branch_to = our_register #branch to specific mem location
+            return branch_to
+        
+        branch_to = register + 1 #continue through instructions without branching
+                                 #it will incrament the next time around reason for +1
+        return branch_to
+        
 
 
 def main():
