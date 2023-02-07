@@ -8,7 +8,6 @@ class UVSim:
         self.instruction_amount = 0
         self.accumulator = 0  # this is our accumulator. We want to use this.w
 
-
     def BranchNeg(self, register, branch_to, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
         register location otherwise, keep going throuhg the program as normal.'''
