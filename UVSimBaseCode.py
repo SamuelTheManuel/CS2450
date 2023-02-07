@@ -148,7 +148,13 @@ class UVSim:
         while len(new_accumulator) < 5:
             new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
         self.accumulator = new_accumulator # store result in accumulator
-
+    def Load(self, val):
+        #load a word from a specific location in memory(val) into the accumulator
+        self.accumulator = self.memory_dict[int(val)]
+    def Store(self, val):
+        #store a word from the accumulator into a specific location(val) in memory
+        self.memory_dict[int(val)] = [True, self.acucmulator]
+        
 def main():
     uvs = UVSim()
     our_string = input_validation().strip().split()
