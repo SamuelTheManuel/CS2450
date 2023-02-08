@@ -104,6 +104,25 @@ class UVSim:
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
+    
+    def Read(self, register):
+        #instrucion 10 Read a word from the keyboard into a specific location in memory.
+        #A word is a signed four-digit decimal number, such as +1234, -5678. 
+        try:
+            input_text = input("Enter vaild word: ")
+            input_text = int(input_text)
+            if -10000 < input_text < 10000:
+                self.memory_dict[register] = input_text
+        except ValueError:
+            print(input_text, " is an invalid word!")
+
+    def Write(self, register):
+        #instruciton 11 Write a word from a specific location in memory to screen.
+        # self.memory_dict[int(val)] = [True, self.accumulator]
+        if register in self.memory_dict:
+            print(self.memory_dict[register])
+        else:
+            print("Empty Memory Location")
 
     def Add(self, register_word):
         '''Add a word from a given register in memory to the word in the accumulator.
