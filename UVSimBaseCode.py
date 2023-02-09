@@ -59,7 +59,6 @@ class UVSim:
                     break #break out of the loop if we reach a halt.
                 else:
                     self.process_instructions(our_instruction, our_register)
-        self.Halt()  # I think we probably want to stop the program if there are no further instructions.
 
     def process_instructions(self, our_instruction, our_register):
         if our_instruction == "10":  # call Read
@@ -101,10 +100,6 @@ class UVSim:
             # if accumulator is zero, branch. passes in the memory register.
             self.BranchZero(our_register)
             '''
-            
-        elif our_instruction == "43":  # calls halt
-            # passing in our register, but im not sure what the point would be. may not need it.
-            self.Halt(our_register)  # probably supposed to end the program
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
