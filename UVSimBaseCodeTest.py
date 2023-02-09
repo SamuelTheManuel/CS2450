@@ -1,14 +1,10 @@
 import pytest
 import UVSimBaseCode
-def main():
-    '''
-    Call your tests here
-    :return:
-    '''
-    test_add()
 
 
 def test_add():
+
+    
 
     '''
     possible example
@@ -23,7 +19,3 @@ def test_add():
     assert (uvs.accumulator == 4)
     
     '''
-
-
-if __name__ == '__main__':
-    main()

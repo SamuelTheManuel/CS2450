@@ -159,10 +159,12 @@ class UVSim:
         try:
             input_text = input("Enter vaild word: ")
             input_text = int(input_text)
-            if isinstance(input_text, int) and len(str(abs(input_text))) == 4:
-                self.memory_dict[register] = input_text
-            else:
-                print("please add a 4-digit number")
+            while (not(isinstance(input_text, int) and len(str(abs(input_text))) == 4)):
+                input_text = input("please add a 4-digit number: ")
+                input_text = int(input_text)
+                
+            self.memory_dict[register] = input_text
+    
         except ValueError:
             print(input_text, " is an invalid word!")
         return
