@@ -133,6 +133,50 @@ class UVSim:
         else:
             print("Empty Memory Location")
         return
+                                         
+    def Add(self, register_word):
+        '''Add a word from a given register in memory to the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) + int(register_word))
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+  
+    def Subtract(self, register_word):
+        '''Subtract a word from a given register in memory from the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) - int(register_word))
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+ 
+    def Multiply(self, register_word):
+        '''Multiply a word from a given register in memory by the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) * int(register_word))
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+
+    def Divide(self, register_word):
+        '''Divide the word in the accumulator by the word in a given register in memory.
+        Result is stored in the accumulator'''
+        try:
+            new_accumulator = str(int(self.accumulator) // int(register_word))
+        except ZeroDivisionError:
+            print("Unable to divide by zero.")
+            return "Divide by zero error"
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
 
     def BranchNeg(self, instruction_line, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
