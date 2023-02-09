@@ -7,6 +7,13 @@ class UVSim:
         self.memory_dict = {}
         self.instruction_amount = 0
         self.accumulator = 0  # this is our accumulator. We want to use this.w
+        for i in range(99): #initiallizes our co
+            our_key = i
+            if i <= 9:
+                our_key = "0" + str(our_key)
+            else:
+                our_key = str(our_key)
+            self.memory_dict[our_key] = [True, "0000"]
 
 
     def initiate_process(self, input_text):
