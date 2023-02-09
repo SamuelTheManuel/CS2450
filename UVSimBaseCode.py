@@ -35,13 +35,13 @@ class UVSim:
             else:
                 print(input_text[item], " is an invalid command!33")
         # begins to process each instruction
-        branch_to = 0 #won't change unless there's a branch
-        for register in range(self.instruction_amount):
-            register = branch_to #changes index based on what it branchges to
-            temp_reg = str(register)
-            if register <= 9:
-                temp_instruction = self.memory_dict[f"0{register}"]
-                temp_reg = f"0{register}"
+        
+        instruction_line = 0
+        while instruction_line < self.instruction_amount:
+            temp_reg = str(instruction_line)
+            if instruction_line <= 9:
+                temp_instruction = self.memory_dict[f"0{instruction_line}"]
+                temp_reg = f"0{instruction_line}"
             else:
                 temp_instruction = self.memory_dict[temp_reg]
             if not temp_instruction[0]:
@@ -50,11 +50,11 @@ class UVSim:
                 our_instruction = temp_instruction[1][0:2]
                 our_register = temp_instruction[1][2:4]
                 if our_instruction == "40":
-                    branch_to = int(our_register)
+                    instruction_line = int(our_register)
                 elif our_instruction == "41":
-                    branch_to = self.BranchNeg(register ,branch_to, int(our_register))
+                    instruction_line = self.BranchNeg(instruction_line, int(our_register))
                 elif our_instruction == "42":
-                    branch_to = self.BranchZero(register, branch_to, int(our_register))
+                    instruction_line = self.BranchZero(instruction_line, int(our_register))
                 elif our_instruction == "43":
                     break #break out of the loop if we reach a halt.
                 else:
@@ -127,27 +127,23 @@ class UVSim:
             print("Empty Memory Location")
         return
 
-    def BranchNeg(self, register, branch_to, our_register):
+    def BranchNeg(self, instruction_line, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
         register location otherwise, keep going throuhg the program as normal.'''
         if self.accumulator < 0:
-            branch_to = our_register  #branch to specific mem location
+            instruction_line = our_register  #branch to specific mem location
             return branch_to
 
-        branch_to = register + 1 #continue through instructions without branching
-                                 #it will incrament the next time around reason for +1
-        return branch_to
+        return instruction_line
 
-    def BranchZero(self, register, branch_to, our_register):
+    def BranchZero(self, instruction_line, our_register):
         '''Branch Zero method. If accumulator is zero branch to specific
            register location otherwise, keep going throuhg the program as normal'''
         if self.accumulator == 0:
-            branch_to = our_register #branch to specific mem location
+            instruction_line = our_register #branch to specific mem location
             return branch_to
         
-        branch_to = register + 1 #continue through instructions without branching
-                                 #it will incrament the next time around reason for +1
-        return branch_to
+        return instruction_line
         
 
 
