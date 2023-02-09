@@ -6,7 +6,7 @@ class UVSim:
         # should be ignored.
         self.memory_dict = {}
         self.instruction_amount = 0
-        self.accumulator = 1  # this is our accumulator. We want to use this.w
+        self.accumulator = 0  # this is our accumulator. We want to use this.w
 
 
     def initiate_process(self, input_text):
