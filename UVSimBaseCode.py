@@ -111,10 +111,13 @@ class UVSim:
         try:
             input_text = input("Enter vaild word: ")
             input_text = int(input_text)
-            if -10000 < input_text < 10000:
+            if isinstance(input_text, int) and len(str(abs(input_text))) == 4:
                 self.memory_dict[register] = input_text
+            else:
+                print("please add a 4-digit number")
         except ValueError:
             print(input_text, " is an invalid word!")
+        return
 
     def Write(self, register):
         #instruciton 11 Write a word from a specific location in memory to screen.
@@ -123,6 +126,7 @@ class UVSim:
             print(self.memory_dict[register])
         else:
             print("Empty Memory Location")
+        return
 
     def Add(self, register_word):
         '''Add a word from a given register in memory to the word in the accumulator.
