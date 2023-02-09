@@ -55,6 +55,8 @@ class UVSim:
                     branch_to = self.BranchNeg(register ,branch_to, int(our_register))
                 elif our_instruction == "42":
                     branch_to = self.BranchZero(register, branch_to, int(our_register))
+                elif our_instruction == "43":
+                    break #break out of the loop if we reach a halt.
                 else:
                     self.process_instructions(our_instruction, our_register)
         self.Halt()  # I think we probably want to stop the program if there are no further instructions.
