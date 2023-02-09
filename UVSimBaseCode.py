@@ -35,13 +35,13 @@ class UVSim:
             else:
                 print(input_text[item], " is an invalid command!33")
         # begins to process each instruction
-        branch_to = 0 #won't change unless there's a branch
-        for register in range(self.instruction_amount):
-            register = branch_to #changes index based on what it branchges to
-            temp_reg = str(register)
-            if register <= 9:
-                temp_instruction = self.memory_dict[f"0{register}"]
-                temp_reg = f"0{register}"
+        
+        instruction_line = 0
+        while instruction_line < self.instruction_amount:
+            temp_reg = str(instruction_line)
+            if instruction_line <= 9:
+                temp_instruction = self.memory_dict[f"0{instruction_line}"]
+                temp_reg = f"0{instruction_line}"
             else:
                 temp_instruction = self.memory_dict[temp_reg]
             if not temp_instruction[0]:
@@ -50,16 +50,16 @@ class UVSim:
                 our_instruction = temp_instruction[1][0:2]
                 our_register = temp_instruction[1][2:4]
                 if our_instruction == "40":
-                    branch_to = int(our_register)
+                    instruction_line = int(our_register)
                 elif our_instruction == "41":
-                    branch_to = self.BranchNeg(register ,branch_to, int(our_register))
+                    instruction_line = self.BranchNeg(instruction_line, int(our_register))
                 elif our_instruction == "42":
-                    branch_to = self.BranchZero(register, branch_to, int(our_register))
+                    instruction_line = self.BranchZero(instruction_line, int(our_register))
                 elif our_instruction == "43":
                     break #break out of the loop if we reach a halt.
                 else:
                     self.process_instructions(our_instruction, our_register)
-
+                    instruction_line += 1
     def process_instructions(self, our_instruction, our_register):
         if our_instruction == "10":  # call Read
             # passes in the register which needs to be assigned the input
@@ -76,7 +76,9 @@ class UVSim:
         elif our_instruction == "30":  # call ADD
             # passes in register contents that needs to be added to accumulator.
             # leave result in the accumulator
-            self.Add(self.memory_dict[our_register][1])
+            self.Add(self.memory_dict[our_register][1]) # FIXME: method calls for add, subtract, mulitply, 
+                                                        # and divide will result in KeyError if this dict entry 
+                                                        # hasn't yet been initialized (register is empty)
         elif our_instruction == "31":  # call Subtract
             # passes in register contents that needs to be subtracted to accumulator.
             # leave result in the accumulator
@@ -103,28 +105,100 @@ class UVSim:
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
+        
 
-    def BranchNeg(self, register, branch_to, our_register):
+    def Add(self, register_word):
+        '''Add a word from a given register in memory to the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) + int(register_word))
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+
+    def Subtract(self, register_word):
+        '''Subtract a word from a given register in memory from the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) - int(register_word))
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+
+    def Multiply(self, register_word):
+        '''Multiply a word from a given register in memory by the word in the accumulator.
+        Result is stored in the accumulator'''
+        new_accumulator = str(int(self.accumulator) * int(register_word))
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+
+    def Divide(self, register_word):
+        '''Divide the word in the accumulator by the word in a given register in memory.
+        Result is stored in the accumulator'''
+        try:
+            new_accumulator = str(int(self.accumulator) // int(register_word))
+        except ZeroDivisionError:
+            print("Unable to divide by zero.")
+            return "Divide by zero error"
+        if int(new_accumulator) >= 0:
+            new_accumulator = "+" + new_accumulator
+        while len(new_accumulator) < 5:
+            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        self.accumulator = new_accumulator # store result in accumulator
+    def Load(self, val):
+        #load a word from a specific location in memory(val) into the accumulator
+        self.accumulator = self.memory_dict[int(val)]
+    def Store(self, val):
+        #store a word from the accumulator into a specific location(val) in memory
+        self.memory_dict[int(val)] = [True, self.acucmulator]
+
+    def Read(self, register):
+        #instrucion 10 Read a word from the keyboard into a specific location in memory.
+        #A word is a signed four-digit decimal number, such as +1234, -5678. 
+        try:
+            input_text = input("Enter vaild word: ")
+            input_text = int(input_text)
+            if isinstance(input_text, int) and len(str(abs(input_text))) == 4:
+                self.memory_dict[register] = input_text
+            else:
+                print("please add a 4-digit number")
+        except ValueError:
+            print(input_text, " is an invalid word!")
+        return
+
+    def Write(self, register):
+        #instruciton 11 Write a word from a specific location in memory to screen.
+        # self.memory_dict[int(val)] = [True, self.accumulator]
+        if register in self.memory_dict:
+            print(self.memory_dict[register])
+        else:
+            print("Empty Memory Location")
+        return
+
+    def BranchNeg(self, instruction_line, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
         register location otherwise, keep going throuhg the program as normal.'''
         if self.accumulator < 0:
-            branch_to = our_register  #branch to specific mem location
-            return branch_to
+            instruction_line = our_register  #branch to specific mem location
+            return instruction_line
 
-        branch_to = register + 1 #continue through instructions without branching
-                                 #it will incrament the next time around reason for +1
-        return branch_to
+        instruction_line += 1 #incrament the instruction line to go to next instruction
+        return instruction_line
 
-    def BranchZero(self, register, branch_to, our_register):
+    def BranchZero(self, instruction_line, our_register):
         '''Branch Zero method. If accumulator is zero branch to specific
            register location otherwise, keep going throuhg the program as normal'''
         if self.accumulator == 0:
-            branch_to = our_register #branch to specific mem location
-            return branch_to
+            instruction_line = our_register #branch to specific mem location
+            return instruction_line
         
-        branch_to = register + 1 #continue through instructions without branching
-                                 #it will incrament the next time around reason for +1
-        return branch_to
+        instruction_line += 1 #incrament the instruction line to go to next instruction
+        return instruction_line
         
 
 
