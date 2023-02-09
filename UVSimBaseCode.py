@@ -6,7 +6,7 @@ class UVSim:
         # should be ignored.
         self.memory_dict = {}
         self.instruction_amount = 0
-        self.accumulator = 0  # this is our accumulator. We want to use this.w
+        self.accumulator = 1  # this is our accumulator. We want to use this.w
 
 
     def initiate_process(self, input_text):
@@ -59,7 +59,7 @@ class UVSim:
                     break #break out of the loop if we reach a halt.
                 else:
                     self.process_instructions(our_instruction, our_register)
-
+                    instruction_line += 1
     def process_instructions(self, our_instruction, our_register):
         if our_instruction == "10":  # call Read
             # passes in the register which needs to be assigned the input
@@ -132,8 +132,9 @@ class UVSim:
         register location otherwise, keep going throuhg the program as normal.'''
         if self.accumulator < 0:
             instruction_line = our_register  #branch to specific mem location
-            return branch_to
+            return instruction_line
 
+        instruction_line += 1 #incrament the instruction line to go to next instruction
         return instruction_line
 
     def BranchZero(self, instruction_line, our_register):
@@ -141,8 +142,9 @@ class UVSim:
            register location otherwise, keep going throuhg the program as normal'''
         if self.accumulator == 0:
             instruction_line = our_register #branch to specific mem location
-            return branch_to
+            return instruction_line
         
+        instruction_line += 1 #incrament the instruction line to go to next instruction
         return instruction_line
         
 
