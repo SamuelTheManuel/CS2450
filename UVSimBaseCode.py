@@ -36,7 +36,7 @@ class UVSim:
                 print(input_text[item], " is an invalid command!33")
         # begins to process each instruction
         
-        instruction_line = 0
+        instruction_line = 0 #index for the instruction we're on
         while instruction_line < self.instruction_amount:
             temp_reg = str(instruction_line)
             if instruction_line <= 9:
@@ -59,7 +59,7 @@ class UVSim:
                     break #break out of the loop if we reach a halt.
                 else:
                     self.process_instructions(our_instruction, our_register)
-                    instruction_line += 1
+                    instruction_line += 1 #incrament 
     def process_instructions(self, our_instruction, our_register):
         if our_instruction == "10":  # call Read
             # passes in the register which needs to be assigned the input
@@ -69,7 +69,7 @@ class UVSim:
             self.Write(our_register)
         elif our_instruction == "20":  # call Load
             # passes in register contents which must be loaded into the accumulator
-            self.Load(self.memory_dict[our_register][1])
+            self.Load(self.memory_dict[our_register])
         elif our_instruction == "21":  # call Store
             # passes in register who will have the contents from the accumulator
             self.Store(our_register)
@@ -82,26 +82,15 @@ class UVSim:
         elif our_instruction == "31":  # call Subtract
             # passes in register contents that needs to be subtracted to accumulator.
             # leave result in the accumulator
-            self.Subtract(self.memory_dict[our_register][1])
+            self.Subtract(self.memory_dict[our_register])
         elif our_instruction == "32":  # call Divide
             # passes in register contents that needs to be Divided to accumulator.
             # leave result in the accumulator
-            self.Divide(self.memory_dict[our_register][1])
+            self.Divide(self.memory_dict[our_register])
         elif our_instruction == "33":  # call Multiply
             # passes in register contents that needs to be multiplied to accumulator.
             # leave result in the accumulator
-            self.Multiply(self.memory_dict[our_register][1])
-            '''
-        elif our_instruction == "40":  # calls Branch
-            # I'm passing in the register that it wants to branch to, but I'm not sure what you'll need
-            self.Branch(our_register)
-        elif our_instruction == "41":  # calls BranchNeg
-            # if accumulator is negative, branch. passes in the memory register.
-            self.BranchNeg(our_register)
-        elif our_instruction == "42":  # calls BranchZero
-            # if accumulator is zero, branch. passes in the memory register.
-            self.BranchZero(our_register)
-            '''
+            self.Multiply(self.memory_dict[our_register])
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
@@ -152,7 +141,7 @@ class UVSim:
         self.accumulator = new_accumulator # store result in accumulator
     def Load(self, val):
         #load a word from a specific location in memory(val) into the accumulator
-        self.accumulator = self.memory_dict[int(val)]
+        self.accumulator = val
     def Store(self, val):
         #store a word from the accumulator into a specific location(val) in memory
         self.memory_dict[int(val)] = [True, self.acucmulator]
@@ -183,7 +172,7 @@ class UVSim:
     def BranchNeg(self, instruction_line, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
         register location otherwise, keep going throuhg the program as normal.'''
-        if self.accumulator < 0:
+        if int(self.accumulator) < 0:
             instruction_line = our_register  #branch to specific mem location
             return instruction_line
 
@@ -193,7 +182,7 @@ class UVSim:
     def BranchZero(self, instruction_line, our_register):
         '''Branch Zero method. If accumulator is zero branch to specific
            register location otherwise, keep going throuhg the program as normal'''
-        if self.accumulator == 0:
+        if int(self.accumulator) == 0:
             instruction_line = our_register #branch to specific mem location
             return instruction_line
         
