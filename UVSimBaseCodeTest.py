@@ -2,6 +2,7 @@ import pytest
 import UVSimBaseCode
 import pytest
 from UVSimBaseCode import *
+import UVSimBaseCode
 import os
 import sys
 import mock
