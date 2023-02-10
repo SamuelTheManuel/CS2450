@@ -192,13 +192,9 @@ class UVSim:
     def Write(self, register):
         #instruciton 11 Write a word from a specific location in memory to screen.
         # self.memory_dict[int(val)] = [True, self.accumulator]
-        if register in self.memory_dict:
-            if self.memory_dict[register][0] == True:
-                print(f'REGISTER {register}: +{self.memory_dict[register][1]}')
-                return (f'REGISTER {register}: +{self.memory_dict[register][1]}')
-            else:
-                print(f'REGISTER {register}: -{self.memory_dict[register][1]}')
-                return (f'REGISTER {register}: -{self.memory_dict[register][1]}')
+        if register in self.memory_dict:   
+            print(f'{self.memory_dict[register][1]}')
+            return ({self.memory_dict[register][1]})
 
 
     def BranchNeg(self, instruction_line, our_register):
