@@ -1,6 +1,7 @@
 import pytest
-from UVSimBaseCode import *
+import UVSimBaseCode
 import pytest
+from UVSimBaseCode import *
 import os
 import sys
 import mock
@@ -9,7 +10,7 @@ from io import StringIO
 
 def test_Read():
     #Testing that it works with a valid input
-    sim = UVSimBaseCode.UVSim()
+    sim = UVSim()
     with mock.patch("builtins.input", return_value="1234"):
         result = sim.Read(0)
         assert result == [False, "1234"]
@@ -27,7 +28,7 @@ def test_Read():
 
 def test_Write():
     #Testing that it works on a vaild register
-    sim = UVSimBaseCode.UVSim()
+    sim = UVSim()
     sim.memory_dict = {0: [True, "1234"]}
     captured_output = StringIO()
     sys.stdout = captured_output
@@ -42,7 +43,6 @@ def test_Write():
     sys.stdout = sys.__stdout__
     assert result == None
     assert captured_output.getvalue() == ""
-
 
 
 
