@@ -152,7 +152,7 @@ class UVSim:
         self.accumulator = val
     def Store(self, val):
         #store a word from the accumulator into a specific location(val) in memory
-        self.memory_dict[int(val)] = [True, self.accumulator]
+        self.memory_dict[val] = [True, self.accumulator]#val is a string, not an int
 
     def Read(self, register):
         #instrucion 10 Read a word from the keyboard into a specific location in memory.
