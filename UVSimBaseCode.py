@@ -44,7 +44,7 @@ class UVSim:
         # begins to process each instruction
         
         instruction_line = 0 #index for the instruction we're on
-        while instruction_line < self.instruction_amount:
+        while instruction_line < len(self.memory_dict):
             temp_reg = str(instruction_line)
             if instruction_line <= 9:
                 temp_instruction = self.memory_dict[f"0{instruction_line}"]
@@ -108,7 +108,7 @@ class UVSim:
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) + int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 4:
             new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0:
             new_accumulator[1] = new_accumulator[1][1:]
@@ -120,7 +120,7 @@ class UVSim:
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) - int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 4:
             new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0:
             new_accumulator[1] = new_accumulator[1][1:]
@@ -132,7 +132,7 @@ class UVSim:
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) * int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 4:
             new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0 and int(new_accumulator[1][0] == '0'):
             new_accumulator[1] = new_accumulator[1][1:]
@@ -159,7 +159,7 @@ class UVSim:
         self.accumulator = val
     def Store(self, val):
         #store a word from the accumulator into a specific location(val) in memory
-        self.memory_dict[val] = [True, self.accumulator]#val is a string, not an int
+        self.memory_dict[val] = self.accumulator#val is a string, not an int
 
     def Read(self, register):
         #instrucion 10 Read a word from the keyboard into a specific location in memory.
