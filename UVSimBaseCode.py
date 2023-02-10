@@ -67,6 +67,7 @@ class UVSim:
                 else:
                     self.process_instructions(our_instruction, our_register)
                     instruction_line += 1 #incrament 
+                
     def process_instructions(self, our_instruction, our_register):
         if our_instruction == "10":  # call Read
             # passes in the register which needs to be assigned the input
@@ -151,32 +152,37 @@ class UVSim:
         self.accumulator = val
     def Store(self, val):
         #store a word from the accumulator into a specific location(val) in memory
-        self.memory_dict[int(val)] = [True, self.acucmulator]
+        self.memory_dict[int(val)] = [True, self.accumulator]
 
     def Read(self, register):
         #instrucion 10 Read a word from the keyboard into a specific location in memory.
         #A word is a signed four-digit decimal number, such as +1234, -5678. 
         try:
             input_text = input("Enter vaild word: ")
-            input_text = int(input_text)
-            while (not(isinstance(input_text, int) and len(str(abs(input_text))) == 4)):
+            temp = int(input_text)
+            while (not(isinstance(temp, int) and len((input_text))) == 4):
                 input_text = input("please add a 4-digit number: ")
-                input_text = int(input_text)
+                temp= int(input_text)
                 
-            self.memory_dict[register] = input_text
+            self.memory_dict[register] = [False, input_text]
     
         except ValueError:
             print(input_text, " is an invalid word!")
-        return
+            self.Read(register)
+        return self.memory_dict[register]
+
 
     def Write(self, register):
         #instruciton 11 Write a word from a specific location in memory to screen.
         # self.memory_dict[int(val)] = [True, self.accumulator]
         if register in self.memory_dict:
-            print(self.memory_dict[register])
-        else:
-            print("Empty Memory Location")
-        return
+            if self.memory_dict[register][0] == True:
+                print(f'REGISTER {register}: +{self.memory_dict[register][1]}')
+                return (f'REGISTER {register}: +{self.memory_dict[register][1]}')
+            else:
+                print(f'REGISTER {register}: -{self.memory_dict[register][1]}')
+                return (f'REGISTER {register}: -{self.memory_dict[register][1]}')
+
 
     def BranchNeg(self, instruction_line, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
