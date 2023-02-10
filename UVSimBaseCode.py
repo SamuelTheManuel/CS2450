@@ -108,7 +108,7 @@ class UVSim:
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) + int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 4:
+        while len(new_accumulator[1]) < 5:
             new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0:
             new_accumulator[1] = new_accumulator[1][1:]
@@ -120,7 +120,7 @@ class UVSim:
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) - int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 4:
+        while len(new_accumulator[1]) < 5:
             new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0:
             new_accumulator[1] = new_accumulator[1][1:]
@@ -132,7 +132,7 @@ class UVSim:
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) * int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 4:
+        while len(new_accumulator[1]) < 5:
             new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0 and int(new_accumulator[1][0] == '0'):
             new_accumulator[1] = new_accumulator[1][1:]

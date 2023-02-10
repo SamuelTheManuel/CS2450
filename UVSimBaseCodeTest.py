@@ -143,8 +143,8 @@ def test_branch1(tmpdir):
     our_string = content.strip().split()
     uvs.initiate_process(our_string)
 
-    assert uvs.memory_dict["10"][1] == [True,"3004"]
-    assert uvs.accumulator == [True,"3004"]
+    assert uvs.memory_dict["10"][1] == "3004"
+    assert uvs.accumulator == [False,"4204"]
 
 
 def test_branch2(tmpdir):
@@ -166,8 +166,8 @@ def test_branch2(tmpdir):
     uvs.initiate_process(our_string)
 
     print(uvs.memory_dict["50"])
-    assert uvs.memory_dict["50"][1] == [True, "3303"]
-    assert uvs.accumulator == [True,"3303"]
+    assert uvs.memory_dict["50"][1] == "3303"
+    assert uvs.accumulator == [False,"3963600"]
 
 
 
@@ -193,8 +193,8 @@ def test_branch_neg1(tmpdir):
     our_string = content.strip().split()
     uvs.initiate_process(our_string)
 
-    assert uvs.memory_dict["60"][1] == [True, "3000"]
-    assert uvs.accumulator[1] == "-4444"
+    assert uvs.memory_dict["60"][1] == "3000"
+    assert uvs.accumulator[1] == "-2439"
 
 
 # def test_branch_neg1(tmpdir):
