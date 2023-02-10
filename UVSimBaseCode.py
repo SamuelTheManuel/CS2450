@@ -6,7 +6,7 @@ class UVSim:
         # should be ignored.
         self.memory_dict = {}
         self.instruction_amount = 0
-        self.accumulator = 0  # this is our accumulator. We want to use this.w
+        self.accumulator = [False, "0000"] # this is our accumulator. We want to use this.w
         for i in range(99): #initiallizes our co
             our_key = i
             if i <= 9:
