@@ -155,16 +155,18 @@ class UVSim:
         self.accumulator = new_accumulator # store result in accumulator
 
      def Load(self, val):
+        '''load a word from a specific location in memory(val) into the accumulator'''    
         if val[1].isdigit():
-            '''load a word from a specific location in memory(val) into the accumulator'''
+            #load a word from a specific location in memory(val) into the accumulator
             self.accumulator = val
         else:
             print("The value you are trying to load is not a number")
     
     def Store(self, val):
+        '''store a word from the accumulator into a specific location(val) in memory'''
         #test if the val is a string of numbers
         if self.memory_dict[val][0] == True:
-            #store a word from the accumulator into a specific location(val) in memory
+            
             self.memory_dict[val] = self.accumulator#val is a string, not an int
         else:
             print("The value you are trying to store is not designated as a value")
