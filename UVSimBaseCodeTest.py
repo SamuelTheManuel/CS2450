@@ -5,23 +5,6 @@ import sys
 import mock
 from io import StringIO
 
-def test_add():
-
-    
-
-    '''
-    possible example
-    :return:
-    '''
-    '''
-    example for this, what it may look like.
-    uvs = UVSimBaseCode.UVSim()
-    file_path = "" #whatever our file path is
-    our_string = UVSimBaseCode.input_validation(file_path).strip().split()
-    uvs.process_instructions(our_string)
-    assert (uvs.accumulator == 4)
-    
-    '''
 
 def test_Read():
     #Testing that it works with a valid input
@@ -60,4 +43,103 @@ def test_Write():
     assert captured_output.getvalue() == ""
 
 
-    
+
+import pytest
+from UVSimBaseCode import *
+
+def test_branch1(tmpdir):
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write("+2003\n")
+        f.write("+2110\n")
+        f.write("+4010\n")
+        f.write("+3004\n")
+        f.write("+1200")
+
+    with b.open() as f:
+        content = f.read()
+        #check for all the contents
+        assert content == "+2003\n+2110\n+4010\n+3004\n+1200"
+
+    uvs = UVSim()
+    our_string = content.strip().split()
+    uvs.initiate_process(our_string)
+
+    assert uvs.memory_dict["10"][1] == "3004"
+    assert uvs.accumulator == "4204"
+
+
+def test_branch2(tmpdir):
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write("+2004\n")
+        f.write("+2150\n")
+        f.write("+4050\n")
+        f.write("+1200\n")
+        f.write("+3303")
+
+    with b.open() as f:
+        content = f.read()
+        #check for all the contents
+        assert content == "+2004\n+2150\n+4050\n+1200\n+3303"
+
+    uvs = UVSim()
+    our_string = content.strip().split()
+    uvs.initiate_process(our_string)
+
+    assert uvs.memory_dict["50"][1] == "3303"
+    assert uvs.accumulator == "3963600"
+
+
+
+def test_branch_neg1(tmpdir):
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write("+2005\n")
+        f.write("+2160\n")
+        f.write("+2006\n")
+        f.write("+3107\n")
+        f.write("+4160\n")
+        f.write("+3000\n")
+        f.write("+1234\n")
+        f.write("+5678\n")
+
+
+    with b.open() as f:
+        content = f.read()
+        #check for all the contents
+        assert content == "+2005\n+2160\n+2006\n+3107\n+4160\n+3000\n+1234\n+5678\n"
+
+    uvs = UVSim()
+    our_string = content.strip().split()
+    uvs.initiate_process(our_string)
+
+    assert uvs.memory_dict["60"][1] == "3000"
+    assert uvs.accumulator == "-2439"
+
+
+def test_branch_neg1(tmpdir):
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write("+2005\n")
+        f.write("+2160\n")
+        f.write("+2006\n")
+        f.write("+3107\n")
+        f.write("+4160\n")
+        f.write("+3000\n")
+        f.write("+1234\n")
+        f.write("+5678\n")
+
+
+    with b.open() as f:
+        content = f.read()
+        #check for all the contents
+        assert content == "+2005\n+2160\n+2006\n+3107\n+4160\n+3000\n+1234\n+5678\n"
+
+    uvs = UVSim()
+    our_string = content.strip().split()
+    uvs.initiate_process(our_string)
+
+    assert uvs.memory_dict["60"][1] == "3000"
+    assert uvs.accumulator == "-2439"
+
