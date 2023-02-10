@@ -84,21 +84,19 @@ class UVSim:
         elif our_instruction == "30":  # call ADD
             # passes in register contents that needs to be added to accumulator.
             # leave result in the accumulator
-            self.Add(self.memory_dict[our_register][1]) # FIXME: method calls for add, subtract, mulitply, 
-                                                        # and divide will result in KeyError if this dict entry 
-                                                        # hasn't yet been initialized (register is empty)
+            self.Add(self.memory_dict[our_register][1])
         elif our_instruction == "31":  # call Subtract
             # passes in register contents that needs to be subtracted to accumulator.
             # leave result in the accumulator
-            self.Subtract(self.memory_dict[our_register])
+            self.Subtract(self.memory_dict[our_register][1])
         elif our_instruction == "32":  # call Divide
             # passes in register contents that needs to be Divided to accumulator.
             # leave result in the accumulator
-            self.Divide(self.memory_dict[our_register])
+            self.Divide(self.memory_dict[our_register][1])
         elif our_instruction == "33":  # call Multiply
             # passes in register contents that needs to be multiplied to accumulator.
             # leave result in the accumulator
-            self.Multiply(self.memory_dict[our_register])
+            self.Multiply(self.memory_dict[our_register][1])
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
@@ -107,46 +105,47 @@ class UVSim:
     def Add(self, register_word):
         '''Add a word from a given register in memory to the word in the accumulator.
         Result is stored in the accumulator'''
-        new_accumulator = str(int(self.accumulator) + int(register_word))
-        if int(new_accumulator) >= 0:
-            new_accumulator = "+" + new_accumulator
-        while len(new_accumulator) < 5:
-            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        accumulator = self.accumulator[1]
+        new_accumulator = str(int(accumulator) + int(register_word))
+        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
+        while len(new_accumulator[1]) < 4:
+            new_accumulator[1] = "0" + new_accumulator[1]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Subtract(self, register_word):
         '''Subtract a word from a given register in memory from the word in the accumulator.
         Result is stored in the accumulator'''
-        new_accumulator = str(int(self.accumulator) - int(register_word))
-        if int(new_accumulator) >= 0:
-            new_accumulator = "+" + new_accumulator
-        while len(new_accumulator) < 5:
-            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        accumulator = self.accumulator[1]
+        new_accumulator = str(int(accumulator) - int(register_word))
+        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
+        while len(new_accumulator[1]) < 4:
+            new_accumulator[1] = "0" + new_accumulator[1]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Multiply(self, register_word):
         '''Multiply a word from a given register in memory by the word in the accumulator.
         Result is stored in the accumulator'''
-        new_accumulator = str(int(self.accumulator) * int(register_word))
-        if int(new_accumulator) >= 0:
-            new_accumulator = "+" + new_accumulator
-        while len(new_accumulator) < 5:
-            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        accumulator = self.accumulator[1]
+        new_accumulator = str(int(accumulator) * int(register_word))
+        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
+        while len(new_accumulator[1]) < 4:
+            new_accumulator[1] = "0" + new_accumulator[1]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Divide(self, register_word):
         '''Divide the word in the accumulator by the word in a given register in memory.
         Result is stored in the accumulator'''
+        accumulator = self.accumulator[1]
         try:
-            new_accumulator = str(int(self.accumulator) // int(register_word))
+            new_accumulator = str(int(accumulator) // int(register_word))
         except ZeroDivisionError:
             print("Unable to divide by zero.")
             return "Divide by zero error"
-        if int(new_accumulator) >= 0:
-            new_accumulator = "+" + new_accumulator
-        while len(new_accumulator) < 5:
-            new_accumulator = new_accumulator[0] + "0" + new_accumulator[1:]
+        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
+        while len(new_accumulator[1]) < 4:
+            new_accumulator[1] = "0" + new_accumulator[1]
         self.accumulator = new_accumulator # store result in accumulator
+
     def Load(self, val):
         #load a word from a specific location in memory(val) into the accumulator
         self.accumulator = val
