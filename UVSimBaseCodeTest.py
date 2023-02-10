@@ -1,5 +1,6 @@
 import pytest
-import UVSimBaseCode
+from UVSimBaseCode import *
+import pytest
 import os
 import sys
 import mock
@@ -44,8 +45,7 @@ def test_Write():
 
 
 
-import pytest
-from UVSimBaseCode import *
+
 
 def test_branch1(tmpdir):
     b = tmpdir.join("test_branch1.txt")
