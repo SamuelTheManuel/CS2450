@@ -186,7 +186,7 @@ class UVSim:
     def BranchNeg(self, instruction_line, our_register):
         '''Branch negative method. If accumulator is negative branch to specific 
         register location otherwise, keep going throuhg the program as normal.'''
-        if int(self.accumulator) < 0:
+        if int(self.accumulator[1]) < 0:
             instruction_line = our_register  #branch to specific mem location
             return instruction_line
 
@@ -196,7 +196,7 @@ class UVSim:
     def BranchZero(self, instruction_line, our_register):
         '''Branch Zero method. If accumulator is zero branch to specific
            register location otherwise, keep going throuhg the program as normal'''
-        if int(self.accumulator) == 0:
+        if int(self.accumulator[1]) == 0:
             instruction_line = our_register #branch to specific mem location
             return instruction_line
         
