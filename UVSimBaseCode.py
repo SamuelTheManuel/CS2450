@@ -107,9 +107,11 @@ class UVSim:
         Result is stored in the accumulator'''
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) + int(register_word))
-        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
-        while len(new_accumulator[1]) < 4:
-            new_accumulator[1] = "0" + new_accumulator[1]
+        new_accumulator = [False, new_accumulator]
+        if int(new_accumulator[1]) >= 0:
+            new_accumulator[1] = "+" + new_accumulator[1]
+        while len(new_accumulator[1]) < 5:
+            new_accumulator[1] = new_accumulator[1][0] + "0" + new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Subtract(self, register_word):
@@ -117,9 +119,11 @@ class UVSim:
         Result is stored in the accumulator'''
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) - int(register_word))
-        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
-        while len(new_accumulator[1]) < 4:
-            new_accumulator[1] = "0" + new_accumulator[1]
+        new_accumulator = [False, new_accumulator]
+        if int(new_accumulator[1]) >= 0:
+            new_accumulator[1] = "+" + new_accumulator[1]
+        while len(new_accumulator[1]) < 5:
+            new_accumulator[1] = new_accumulator[1][0] + "0" + new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Multiply(self, register_word):
@@ -127,9 +131,11 @@ class UVSim:
         Result is stored in the accumulator'''
         accumulator = self.accumulator[1]
         new_accumulator = str(int(accumulator) * int(register_word))
-        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
-        while len(new_accumulator[1]) < 4:
-            new_accumulator[1] = "0" + new_accumulator[1]
+        new_accumulator = [False, new_accumulator]
+        if int(new_accumulator[1]) >= 0:
+            new_accumulator[1] = "+" + new_accumulator[1]
+        while len(new_accumulator[1]) < 5:
+            new_accumulator[1] = new_accumulator[1][0] + "0" + new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Divide(self, register_word):
@@ -141,9 +147,11 @@ class UVSim:
         except ZeroDivisionError:
             print("Unable to divide by zero.")
             return "Divide by zero error"
-        new_accumulator = [int(new_accumulator) >= 0, str(abs(int(new_accumulator)))]
-        while len(new_accumulator[1]) < 4:
-            new_accumulator[1] = "0" + new_accumulator[1]
+        new_accumulator = [False, new_accumulator]
+        if int(new_accumulator[1]) >= 0:
+            new_accumulator[1] = "+" + new_accumulator[1]
+        while len(new_accumulator[1]) < 5:
+            new_accumulator[1] = new_accumulator[1][0] + "0" + new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Load(self, val):
