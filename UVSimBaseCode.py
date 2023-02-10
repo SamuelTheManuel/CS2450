@@ -154,13 +154,21 @@ class UVSim:
             new_accumulator[1] = new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
-    def Load(self, val):
-        #load a word from a specific location in memory(val) into the accumulator
-        self.accumulator = val
+     def Load(self, val):
+        if val[1].isdigit():
+            '''load a word from a specific location in memory(val) into the accumulator'''
+            self.accumulator = val
+        else:
+            print("The value you are trying to load is not a number")
+    
     def Store(self, val):
-        #store a word from the accumulator into a specific location(val) in memory
-        self.memory_dict[val] = self.accumulator#val is a string, not an int
-
+        #test if the val is a string of numbers
+        if self.memory_dict[val][0] == True:
+            #store a word from the accumulator into a specific location(val) in memory
+            self.memory_dict[val] = self.accumulator#val is a string, not an int
+        else:
+            print("The value you are trying to store is not designated as a value")
+            
     def Read(self, register):
         #instrucion 10 Read a word from the keyboard into a specific location in memory.
         #A word is a signed four-digit decimal number, such as +1234, -5678. 
