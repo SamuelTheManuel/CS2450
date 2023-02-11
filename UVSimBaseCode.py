@@ -52,6 +52,7 @@ class UVSim:
             else:
                 temp_instruction = self.memory_dict[temp_reg]
             if not temp_instruction[0]:
+                instruction_line += 1
                 pass
             else:
                 our_instruction = temp_instruction[1][0:2]
