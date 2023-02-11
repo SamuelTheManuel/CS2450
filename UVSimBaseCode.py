@@ -239,24 +239,24 @@ def main():
 
 
 # validates input from user. if it is not a valid file path, it asks for a new file path.
-def input_validation():
+def input_validation(our_input = None):
     """
     Validates user input. Valid input is an existing file path.
     :return: the text within that file as a string.
     """
+    args = our_input
     try:
-        our_string = ""
-        args = input("Please provide full input file path here: ")  # takes user input
+        if args is None:
+            our_string = ""
+            args = input("Please provide full input file path here: ")  # takes user input
         if args == "quit":  # ends program
             exit()
         with open(args, "r") as input_file:  # attempts to open the file given
             our_string = input_file.read()
-        print(our_string)
         return our_string
     except FileNotFoundError:  # if the file doesn't exist, retry.
         print("Please try again! ")
         return input_validation()
-
 
 if __name__ == '__main__':
     main()
