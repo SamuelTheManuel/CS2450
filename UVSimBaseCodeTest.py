@@ -8,6 +8,21 @@ import sys
 import mock
 from io import StringIO
 
+def test_all():
+    '''
+    tests all functions
+    :return:
+    '''
+    uvs = UVSimBaseCode.UVSim()
+    file_path = r"C:\Users\Sarah\Desktop\sarah\School\2023\Spring 2023\CS 2450\UVSim\TestAll1.txt"  # whatever our file path is
+    our_string = UVSimBaseCode.input_validation(file_path).strip().split()
+    uvs.initiate_process(our_string)
+    print(uvs.memory_dict["22"])
+    assert uvs.memory_dict["22"][1] == "0100"
+    assert uvs.memory_dict["26"][1] == "-0442"
+    assert uvs.accumulator[1] == "-0442"
+
+
 def test_add1():
     sim = UVSim()
     # empty accumulator test
