@@ -8,7 +8,22 @@ import sys
 import mock
 from io import StringIO
 
-def test_add():
+def test_all():
+    '''
+    tests all functions
+    :return:
+    '''
+    uvs = UVSimBaseCode.UVSim()
+    file_path = r"C:\Users\Sarah\Desktop\sarah\School\2023\Spring 2023\CS 2450\UVSim\TestAll1.txt"  # whatever our file path is
+    our_string = UVSimBaseCode.input_validation(file_path).strip().split()
+    uvs.initiate_process(our_string)
+    print(uvs.memory_dict["22"])
+    assert uvs.memory_dict["22"][1] == "0100"
+    assert uvs.memory_dict["26"][1] == "-0442"
+    assert uvs.accumulator[1] == "-0442"
+
+
+def test_add1():
     sim = UVSim()
     # empty accumulator test
     sim.memory_dict["50"] = [False, "5005"]
@@ -33,9 +48,35 @@ def test_add():
     our_register = "60"
     sim.Add(sim.memory_dict[our_register][1])
     assert sim.accumulator == [False, "0045"]
+
+def test_add2():
+    sim = UVSim()
+    # empty accumulator test
+    sim.memory_dict["60"] = [False, "0005"]
+    our_register = "60"
+    sim.Add(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "0005"]
+    # common add test
+    sim.accumulator = [False, "+0005"]
+    sim.memory_dict["71"] = [False, "3005"]
+    our_register = "71"
+    sim.Add(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "3010"]
+    # test with small numbers
+    sim.accumulator = [False, "+0000"]
+    sim.memory_dict["83"] = [False, "0001"]
+    our_register = "83"
+    sim.Add(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "0001"]
+    # addition of a negative
+    sim.accumulator = [False, "-0050"]
+    sim.memory_dict["60"] = [False, "+0005"]
+    our_register = "60"
+    sim.Add(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "-0045"]
     
 
-def test_subtract():
+def test_subtract1():
     sim = UVSim()
     # empty register test
     sim.accumulator = [False, "5555"]
@@ -53,7 +94,24 @@ def test_subtract():
     sim.Subtract(sim.memory_dict[our_register][1])
     assert sim.accumulator == [False, "0545"]
 
-def test_multiply():
+def test_subtract2():
+    sim = UVSim()
+    # empty register test
+    sim.accumulator = [False, "-3500"]
+    our_register = "65"
+    sim.Subtract(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "-3500"]
+    # common subtraction test
+    sim.accumulator = [False, "5555"]
+    sim.memory_dict["65"] = [False, "5556"]
+    sim.Subtract(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "-0001"]
+    # subtraction of a negative
+    sim.accumulator = [False, "0500"]
+    sim.memory_dict["65"] = [False, "-5545"]
+    sim.Subtract(sim.memory_dict[our_register][1])
+
+def test_multiply1():
     sim = UVSim()
     # empty register test
     sim.accumulator = [False, "5555"]
@@ -70,8 +128,26 @@ def test_multiply():
     sim.memory_dict["50"] = [False, "-0045"]
     sim.Multiply(sim.memory_dict[our_register][1])
     assert sim.accumulator == [False, "-22500"]
-    
-def test_divide():
+
+def test_multiply2():
+    sim = UVSim()
+    # empty register test
+    sim.accumulator = [False, "3333"]
+    our_register = "70"
+    sim.Multiply(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "0000"]
+    # common multiplication test
+    sim.accumulator = [False, "5000"]
+    sim.memory_dict["70"] = [False, "0002"]
+    sim.Multiply(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "10000"]
+    # negative multiplication
+    sim.accumulator = [False, "-0056"]
+    sim.memory_dict["70"] = [False, "0020"]
+    sim.Multiply(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "-1120"]
+
+def test_divide1():
     sim = UVSim()
     # divide by zero test
     assert sim.Divide("0000") == "Divide by zero error"
@@ -85,6 +161,21 @@ def test_divide():
     sim.memory_dict["50"] = [False, "0045"]
     sim.Divide(sim.memory_dict[our_register][1])
     assert sim.accumulator == [False, "0011"]
+
+def test_divide2():
+    sim = UVSim()
+    # divide by zero test
+    our_register = "80"
+    assert sim.Divide(sim.memory_dict[our_register][1]) == "Divide by zero error"
+    # empty accumulator test
+    sim.memory_dict["80"] = [False, "9555"]
+    sim.Divide(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "0000"]
+    # common division test
+    sim.accumulator = [False, "5555"]
+    sim.memory_dict["80"] = [False, "1111"]
+    sim.Divide(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "0005"]
 
 def test_Read():
     #Testing that it works with a valid input
@@ -112,8 +203,8 @@ def test_Write():
     sys.stdout = captured_output
     result = sim.Write(0)
     sys.stdout = sys.__stdout__
-    assert result == "REGISTER 0: +1234"
-    assert captured_output.getvalue() == "REGISTER 0: +1234\n"
+    assert result == {'1234'}
+    assert captured_output.getvalue() == "1234\n"
     #Testing that it does not work with an invalid input
     captured_output = StringIO()
     sys.stdout = captured_output
