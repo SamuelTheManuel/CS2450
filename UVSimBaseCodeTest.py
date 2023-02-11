@@ -219,6 +219,6 @@ def test_branch_neg1(tmpdir):
     our_string = content.strip().split()
     uvs.initiate_process(our_string)
 
-    assert uvs.memory_dict["60"][1] == [True, "3000"]
-    assert uvs.accumulator == "-2439"
+    assert uvs.memory_dict["60"][1] == "3000"
+    assert uvs.accumulator[1] == "-2439"
 
