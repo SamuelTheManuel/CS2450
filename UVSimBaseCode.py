@@ -109,8 +109,11 @@ class UVSim:
         new_accumulator = str(int(accumulator) + int(register_word))
         new_accumulator = [False, new_accumulator]
         while len(new_accumulator[1]) < 5:
-            new_accumulator[1] = "0" + new_accumulator[1]
-        if int(new_accumulator[1]) >= 0:
+            if new_accumulator[1][0] == '-':
+                new_accumulator[1] = '-0' + new_accumulator[1][1:]
+            else:
+                new_accumulator[1] = "0" + new_accumulator[1]
+        if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
@@ -121,8 +124,11 @@ class UVSim:
         new_accumulator = str(int(accumulator) - int(register_word))
         new_accumulator = [False, new_accumulator]
         while len(new_accumulator[1]) < 5:
-            new_accumulator[1] = "0" + new_accumulator[1]
-        if int(new_accumulator[1]) >= 0:
+            if new_accumulator[1][0] == '-':
+                new_accumulator[1] = '-0' + new_accumulator[1][1:]
+            else:
+                new_accumulator[1] = "0" + new_accumulator[1]
+        if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
@@ -133,8 +139,11 @@ class UVSim:
         new_accumulator = str(int(accumulator) * int(register_word))
         new_accumulator = [False, new_accumulator]
         while len(new_accumulator[1]) < 5:
-            new_accumulator[1] = "0" + new_accumulator[1]
-        if int(new_accumulator[1]) >= 0 and int(new_accumulator[1][0] == '0'):
+            if new_accumulator[1][0] == '-':
+                new_accumulator[1] = '-0' + new_accumulator[1][1:]
+            else:
+                new_accumulator[1] = "0" + new_accumulator[1]
+        if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
@@ -149,18 +158,31 @@ class UVSim:
             return "Divide by zero error"
         new_accumulator = [False, new_accumulator]
         while len(new_accumulator[1]) < 5:
-            new_accumulator[1] = "0" + new_accumulator[1]
-        if int(new_accumulator[1]) >= 0:
+            if new_accumulator[1][0] == '-':
+                new_accumulator[1] = '-0' + new_accumulator[1][1:]
+            else:
+                new_accumulator[1] = "0" + new_accumulator[1]
+        if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
         self.accumulator = new_accumulator # store result in accumulator
 
     def Load(self, val):
-        #load a word from a specific location in memory(val) into the accumulator
-        self.accumulator = val
+        '''load a word from a specific location in memory(val) into the accumulator'''    
+        if val[1].isdigit():
+            #load a word from a specific location in memory(val) into the accumulator
+            self.accumulator = val
+        else:
+            print("The value you are trying to load is not a number")
+    
     def Store(self, val):
-        #store a word from the accumulator into a specific location(val) in memory
-        self.memory_dict[val] = self.accumulator#val is a string, not an int
-
+        '''store a word from the accumulator into a specific location(val) in memory'''
+        #test if the val is a string of numbers
+        if self.memory_dict[val][0] == True:
+            
+            self.memory_dict[val] = self.accumulator#val is a string, not an int
+        else:
+            print("The value you are trying to store is not designated as a value")
+            
     def Read(self, register):
         #instrucion 10 Read a word from the keyboard into a specific location in memory.
         #A word is a signed four-digit decimal number, such as +1234, -5678. 
@@ -182,13 +204,9 @@ class UVSim:
     def Write(self, register):
         #instruciton 11 Write a word from a specific location in memory to screen.
         # self.memory_dict[int(val)] = [True, self.accumulator]
-        if register in self.memory_dict:
-            if self.memory_dict[register][0] == True:
-                print(f'REGISTER {register}: +{self.memory_dict[register][1]}')
-                return (f'REGISTER {register}: +{self.memory_dict[register][1]}')
-            else:
-                print(f'REGISTER {register}: -{self.memory_dict[register][1]}')
-                return (f'REGISTER {register}: -{self.memory_dict[register][1]}')
+        if register in self.memory_dict:   
+            print(f'{self.memory_dict[register][1]}')
+            return ({self.memory_dict[register][1]})
 
 
     def BranchNeg(self, instruction_line, our_register):
