@@ -369,7 +369,7 @@ def test_branch_zero1(tmpdir):
     assert uvs.accumulator[1] == "0001"
 
 
-def test_branch_zero1(tmpdir):
+def test_branch_halt1(tmpdir):
     b = tmpdir.join("test_branch1.txt")
     with b.open('w') as f:
         f.write("+4300\n")
@@ -391,7 +391,7 @@ def test_branch_zero1(tmpdir):
     assert uvs.accumulator[1] == "0000"
 
 
-def test_branch_zero1(tmpdir):
+def test_branch_halt2(tmpdir):
     b = tmpdir.join("test_branch1.txt")
     with b.open('w') as f:
         f.write("+2004\n")
