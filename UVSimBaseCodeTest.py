@@ -203,8 +203,8 @@ def test_Write():
     sys.stdout = captured_output
     result = sim.Write(0)
     sys.stdout = sys.__stdout__
-    assert result == "REGISTER 0: +1234"
-    assert captured_output.getvalue() == "REGISTER 0: +1234\n"
+    assert result == {'1234'}
+    assert captured_output.getvalue() == "1234\n"
     #Testing that it does not work with an invalid input
     captured_output = StringIO()
     sys.stdout = captured_output
