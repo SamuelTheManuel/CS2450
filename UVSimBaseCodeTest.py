@@ -391,22 +391,6 @@ def test_branch_halt1(tmpdir):
     assert uvs.memory_dict["02"][1] == "2100"
     assert uvs.accumulator[1] == "0000"
 
-
-def test_branch_halt2(tmpdir):
-    b = tmpdir.join("test_branch1.txt")
-    with b.open('w') as f:
-        f.write("+2004\n")
-        f.write("+4300\n")
-        f.write("+2005\n")
-        f.write("+1234\n")
-        f.write("+5678\n")
-
-
-    with b.open() as f:
-        content = f.read()
-        #check for all the contents
-        assert content == "+2004\n+4300\n+2005\n+1234\n+5678\n"
-        
 def test_load():
     '''load a word from a specific location in memory(val) into the accumulator'''
     sim = UVSim()
@@ -441,6 +425,22 @@ def test_store():
     our_register = "100"
     sim.Store(our_register)
     assert sim.memory_dict["42"] != [True, "9999"]
+def test_branch_halt2(tmpdir):
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write("+2004\n")
+        f.write("+4300\n")
+        f.write("+2005\n")
+        f.write("+1234\n")
+        f.write("+5678\n")
+
+
+    with b.open() as f:
+        content = f.read()
+        #check for all the contents
+        assert content == "+2004\n+4300\n+2005\n+1234\n+5678\n"
+        
+
     uvs = UVSim()
     our_string = content.strip().split()
     uvs.initiate_process(our_string)
