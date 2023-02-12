@@ -53,7 +53,7 @@ def test_store():
     sim = UVSim()
     sim.memory_dict["42"] = [True, "1221"]
     sim.accumulator = [True, "9999"]
-    our_register = "100"
+    our_register = "99"
     sim.Store(our_register)
     assert sim.memory_dict["42"] != [True, "9999"]
     
