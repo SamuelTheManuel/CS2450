@@ -110,6 +110,7 @@ def test_subtract2():
     sim.accumulator = [False, "0500"]
     sim.memory_dict["65"] = [False, "-5545"]
     sim.Subtract(sim.memory_dict[our_register][1])
+    assert sim.accumulator == [False, "6045"]
 
 def test_multiply1():
     sim = UVSim()
