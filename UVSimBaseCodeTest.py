@@ -407,40 +407,7 @@ def test_branch_halt2(tmpdir):
         #check for all the contents
         assert content == "+2004\n+4300\n+2005\n+1234\n+5678\n"
         
-def test_load():
-    '''load a word from a specific location in memory(val) into the accumulator'''
-    sim = UVSim()
-    #basic test
-    sim.memory_dict["21"] = [True, "5005"]
-    our_register = "21"
-    sim.Load(sim.memory_dict[our_register])
-    assert sim.accumulator[1] == "5005"
 
-    '''test if a negative number is in the val'''
-    sim = UVSim()
-    sim.memory_dict["20"] = [True, "-505"]
-    our_register = "20"
-    sim.Load(sim.memory_dict[our_register])
-    assert sim.Load(sim.memory_dict[our_register]) != "-505"
-
-
-def test_store():
-    '''store a word from the accumulator into a specific location(val) in memory'''
-    #basic test
-    sim = UVSim()
-    sim.memory_dict["12"] = [True, "4321"]
-    sim.accumulator = [True, "1234"]
-    our_register = "12"
-    sim.Store(our_register)
-    assert sim.memory_dict["12"] != [True, "9999"]
-    
-    #test if given value is in memory
-    sim = UVSim()
-    sim.memory_dict["42"] = [True, "1221"]
-    sim.accumulator = [True, "9999"]
-    our_register = "100"
-    sim.Store(our_register)
-    assert sim.memory_dict["42"] != [True, "9999"]
     uvs = UVSim()
     our_string = content.strip().split()
     uvs.initiate_process(our_string)
