@@ -343,7 +343,7 @@ def test_branch_zero1(tmpdir):
     assert uvs.accumulator[1] == "2005"
 
 
-def test_branch_zero1(tmpdir):
+def test_branch_zero2(tmpdir):
     b = tmpdir.join("test_branch1.txt")
     with b.open('w') as f:
         f.write("+2008\n")
@@ -406,6 +406,12 @@ def test_branch_halt2(tmpdir):
         content = f.read()
         #check for all the contents
         assert content == "+2004\n+4300\n+2005\n+1234\n+5678\n"
+    
+    uvs = UVSim()
+    our_string = content.strip().split()
+    uvs.initiate_process(our_string)
+
+    assert uvs.accumulator[1] == "5678"
         
 def test_load():
     '''load a word from a specific location in memory(val) into the accumulator'''
