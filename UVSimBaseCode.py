@@ -1,4 +1,3 @@
-
 class UVSim:
     def __init__(self, ):
         # dict entries are like: register_number(string): [DataBool(bool), contents(string)]. DataBool indicates whether
@@ -6,7 +5,7 @@ class UVSim:
         # should be ignored.
         self.memory_dict = {}
         self.instruction_amount = 0
-        self.accumulator = [False, "0000"] # this is our accumulator. We want to use this.w
+        self.accumulator = [False, "0000"]  # this is our accumulator. We want to use this.w
         for i in range(100):  # initiallizes our co
             our_key = i
             if i <= 9:
@@ -14,7 +13,6 @@ class UVSim:
             else:
                 our_key = str(our_key)
             self.memory_dict[our_key] = [True, "0000"]
-
 
     def initiate_process(self, input_text):
         # loads each instruction into the corresponding register
@@ -42,8 +40,8 @@ class UVSim:
             else:
                 print(input_text[item], " is an invalid command!33")
         # begins to process each instruction
-        
-        instruction_line = 0 #index for the instruction we're on
+
+        instruction_line = 0  # index for the instruction we're on
         while instruction_line < len(self.memory_dict):
             temp_reg = str(instruction_line)
             if instruction_line <= 9:
@@ -64,11 +62,11 @@ class UVSim:
                 elif our_instruction == "42":
                     instruction_line = self.BranchZero(instruction_line, int(our_register))
                 elif our_instruction == "43":
-                    break #break out of the loop if we reach a halt.
+                    break  # break out of the loop if we reach a halt.
                 else:
                     self.process_instructions(our_instruction, our_register)
-                    instruction_line += 1 #incrament 
-                
+                    instruction_line += 1  # incrament
+
     def process_instructions(self, our_instruction, our_register):
         if our_instruction == "10":  # call Read
             # passes in the register which needs to be assigned the input
@@ -101,7 +99,6 @@ class UVSim:
         else:
             # I don't know what to do with these since they're not instructions.
             self.memory_dict[our_register][0] = False
-        
 
     def Add(self, register_word):
         '''Add a word from a given register in memory to the word in the accumulator.
@@ -116,7 +113,7 @@ class UVSim:
                 new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
-        self.accumulator = new_accumulator # store result in accumulator
+        self.accumulator = new_accumulator  # store result in accumulator
 
     def Subtract(self, register_word):
         '''Subtract a word from a given register in memory from the word in the accumulator.
@@ -131,7 +128,7 @@ class UVSim:
                 new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
-        self.accumulator = new_accumulator # store result in accumulator
+        self.accumulator = new_accumulator  # store result in accumulator
 
     def Multiply(self, register_word):
         '''Multiply a word from a given register in memory by the word in the accumulator.
@@ -146,7 +143,7 @@ class UVSim:
                 new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
-        self.accumulator = new_accumulator # store result in accumulator
+        self.accumulator = new_accumulator  # store result in accumulator
 
     def Divide(self, register_word):
         '''Divide the word in the accumulator by the word in a given register in memory.
@@ -165,71 +162,68 @@ class UVSim:
                 new_accumulator[1] = "0" + new_accumulator[1]
         if int(new_accumulator[1]) >= 0 and new_accumulator[1][0] == '0':
             new_accumulator[1] = new_accumulator[1][1:]
-        self.accumulator = new_accumulator # store result in accumulator
+        self.accumulator = new_accumulator  # store result in accumulator
 
     def Load(self, val):
-        '''load a word from a specific location in memory(val) into the accumulator'''    
+        '''load a word from a specific location in memory(val) into the accumulator'''
         if val[1].isdigit():
-            #load a word from a specific location in memory(val) into the accumulator
+            # load a word from a specific location in memory(val) into the accumulator
             self.accumulator = val
         else:
             print("The value you are trying to load is not a number")
-    
+
     def Store(self, val):
         '''store a word from the accumulator into a specific location(val) in memory'''
-        #test if the val is a string of numbers
+        # test if the val is a string of numbers
         if self.memory_dict[val][0] == True:
-            
-            self.memory_dict[val] = self.accumulator#val is a string, not an int
+
+            self.memory_dict[val] = self.accumulator  # val is a string, not an int
         else:
             print("The value you are trying to store is not designated as a value")
-            
+
     def Read(self, register):
-        #instrucion 10 Read a word from the keyboard into a specific location in memory.
-        #A word is a signed four-digit decimal number, such as +1234, -5678. 
+        # instrucion 10 Read a word from the keyboard into a specific location in memory.
+        # A word is a signed four-digit decimal number, such as +1234, -5678.
         try:
             input_text = input("Enter vaild word: ")
             temp = int(input_text)
-            while (not(isinstance(temp, int) and len((input_text))) == 4):
+            while (not (isinstance(temp, int) and len((input_text))) == 4):
                 input_text = input("please add a 4-digit number: ")
-                temp= int(input_text)
-                
+                temp = int(input_text)
+
             self.memory_dict[register] = [False, input_text]
-    
+
         except ValueError:
             print(input_text, " is an invalid word!")
             self.Read(register)
         return self.memory_dict[register]
 
-
     def Write(self, register):
-        #instruciton 11 Write a word from a specific location in memory to screen.
+        # instruciton 11 Write a word from a specific location in memory to screen.
         # self.memory_dict[int(val)] = [True, self.accumulator]
-        if register in self.memory_dict:   
+        if register in self.memory_dict:
             print(f'{self.memory_dict[register][1]}')
             return ({self.memory_dict[register][1]})
 
-
     def BranchNeg(self, instruction_line, our_register):
-        '''Branch negative method. If accumulator is negative branch to specific 
+        '''Branch negative method. If accumulator is negative branch to specific
         register location otherwise, keep going throuhg the program as normal.'''
         if int(self.accumulator[1]) < 0:
-            instruction_line = our_register  #branch to specific mem location
+            instruction_line = our_register  # branch to specific mem location
             return instruction_line
 
-        instruction_line += 1 #incrament the instruction line to go to next instruction
+        instruction_line += 1  # incrament the instruction line to go to next instruction
         return instruction_line
 
     def BranchZero(self, instruction_line, our_register):
         '''Branch Zero method. If accumulator is zero branch to specific
            register location otherwise, keep going throuhg the program as normal'''
         if int(self.accumulator[1]) == 0:
-            instruction_line = our_register #branch to specific mem location
+            instruction_line = our_register  # branch to specific mem location
             return instruction_line
-        
-        instruction_line += 1 #incrament the instruction line to go to next instruction
+
+        instruction_line += 1  # incrament the instruction line to go to next instruction
         return instruction_line
-        
 
 
 def main():
@@ -239,7 +233,7 @@ def main():
 
 
 # validates input from user. if it is not a valid file path, it asks for a new file path.
-def input_validation(our_input = None):
+def input_validation(our_input=None):
     """
     Validates user input. Valid input is an existing file path.
     :return: the text within that file as a string.
@@ -258,6 +252,6 @@ def input_validation(our_input = None):
         print("Please try again! ")
         return input_validation()
 
+
 if __name__ == '__main__':
     main()
-
