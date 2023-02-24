@@ -32,7 +32,7 @@ class UVSimGUI:
         self.enter_button.place(x=100, y=180 + mod_int)
 
         #logo
-        self.uvsimLogo = PIL.Image.open("unknown (1).png")  # FIX whatever the logo name is.
+        self.uvsimLogo = PIL.Image.open("UVSim_Logo.png")  
         self.uvsimLogo = self.uvsimLogo.resize(size=(202, 101))
         self.render = ImageTk.PhotoImage(self.uvsimLogo)
         self.logo = Label(image=self.render, borderwidth=0)
