@@ -5,20 +5,14 @@ Requirements:
 Install Python
 Install pytest for unit tests
 Install mock for unit tests
+Install PIL
 
 How to use: 
-Put any .txt file(s) with instructions in same directory as UVSimBaseCode.py. From the command line, navigate to this parent directory. Once there, type: python UVSimBaseCode.py. This will run the program.
+Run the UVSimBaseCode.py file with all other files in same directory. The GUI will then launch showing you the program and its different functions. At any time, clicking the "display register contents" button will print out each register and its contents in the output box. Clicking the "Reset Memory" button will clear the memory, initializing each register to 0000.
 
-When prompted, enter file path (relative or absolute) of the .txt file to be processed. 
+To run an instruction file through the UVSim, click the "Choose your instruction .txt file:" button, find and open the .txt file to be processed through the pop-up files menu, then click the "Enter" button.
 
-example: 
-Please provide full input file path here: ./Test1.txt
-
-The program will run your instructions given by the .txt file and prompt you to enter any needed inputs.
-
-If a read instruction is submitted, input a 4 digit integer (word). 
-C:\Users\Sarah Keeley\Desktop\Sarah\school\Coding\ExampleInstructions.txt 
-
+The program will run your instructions given by the chosen .txt file and prompt you to enter any needed inputs after a read instruction is processed.
 
 example.txt :
 -------------------------------------------------------------
@@ -47,13 +41,13 @@ Load/store operations:
 LOAD = 20 Load a word from a specific location in memory into the accumulator.
 STORE = 21 Store a word from the accumulator into a specific location in memory.
 
-Arithmetic operation:
+Arithmetic operations:
 ADD = 30 Add a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator)
 SUBTRACT = 31 Subtract a word from a specific location in memory from the word in the accumulator (leave the result in the accumulator)
 DIVIDE = 32 Divide the word in the accumulator by a word from a specific location in memory (leave the result in the accumulator).
 MULTIPLY = 33 multiply a word from a specific location in memory to the word in the accumulator (leave the result in the accumulator).
 
-Control operation:
+Control operations:
 BRANCH = 40 Branch to a specific location in memory
 BRANCHNEG = 41 Branch to a specific location in memory if the accumulator is negative.
 BRANCHZERO = 42 Branch to a specific location in memory if the accumulator is zero.
