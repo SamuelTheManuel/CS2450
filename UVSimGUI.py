@@ -2,6 +2,8 @@ import tkinter.font
 from tkinter import *
 from tkinter import filedialog as fd
 from tkinter import colorchooser as cc
+from tkinter.filedialog import asksaveasfile
+
 import PIL
 import PIL.Image
 from PIL import ImageTk
@@ -51,6 +53,21 @@ class UVSimGUI:
         self.open_file_button.place(x=75, y=60 + mod_int)
         self.style_dict.append([self.open_file_button, "Secondary", "Text"])
 
+        # new file button
+        self.new_file_button = Button(self.our_window, text="New File:", command=self.new_file)
+        self.new_file_button.configure(background=self.secondary_color, font=("Constantia", "10"), foreground=self.text_color)
+        self.new_file_button.bind(("<Enter>"), self.on_enter)
+        self.new_file_button.bind("<Leave>", self.on_exit)
+        self.new_file_button.place(x=155, y=100 + mod_int)
+        self.style_dict.append([self.new_file_button, "Secondary", "Text"])
+
+        # Edit file button
+        self.edit_file_button = Button(self.our_window, text="Edit File:", command=self.edit_file)
+        self.edit_file_button.configure(background=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
+        self.edit_file_button.bind(("<Enter>"), self.on_enter)
+        self.edit_file_button.bind("<Leave>", self.on_exit)
+        self.edit_file_button.place(x=85, y=100 + mod_int)
+        self.style_dict.append([self.edit_file_button, "Tertiary", "SecondaryText"])
 
         #filemenu
         self.menubar = Menu(self.our_window)
@@ -66,7 +83,7 @@ class UVSimGUI:
         self.enter_button.configure(bg=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
         self.enter_button.bind("<Enter>", self.on_enter)
         self.enter_button.bind("<Leave>", self.on_exit)
-        self.enter_button.place(x=105, y=95 + mod_int)
+        self.enter_button.place(x=105, y=140 + mod_int)
         self.style_dict.append([self.enter_button, "Tertiary", "SecondaryText"])
 
 
@@ -79,7 +96,7 @@ class UVSimGUI:
 
         #Label:
         self.our_label = Label(self.our_window, text="Selected File: ", font=("Constantia", 10), background=self.primary_color, foreground=self.secondary_text_color)
-        self.our_label.place(x=20, y=260)
+        self.our_label.place(x=20, y=270)
         self.style_dict.append([self.our_label, "Primary", "SecondaryText"])
 
 
@@ -239,6 +256,81 @@ class UVSimGUI:
 
     def on_exit(self, e):
         e.widget["foreground"], e.widget["background"] = e.widget["background"], e.widget["foreground"]
+
+    def new_file(self):
+        self.filename = ""
+        self.edit_file()
+
+    def edit_file(self):
+        self.input_widget = Toplevel(self.our_window)
+        self.input_widget.title("Edit File")
+        self.input_widget.geometry("400x300")
+        self.input_widget.configure(background="#ffffff")
+        self.input_widget.grab_set()
+
+        v = Scrollbar(self.input_widget, orient="vertical")
+        self.file_edit = Text(self.input_widget, font=("Constantia", 10), yscrollcommand=v.set,
+                               background=self.output_bg, foreground=self.output_text, width=35, height=14)
+        v.config(command=self.file_edit.yview)
+        self.file_edit.pack()
+        self.style_dict.append([self.our_output, "OutputBg", "OutputText"])
+
+        #save File Button
+        self.save_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, command=self.SaveFile, text="Save File")
+        self.save_file_button.bind("<Enter>", self.on_enter)
+        self.save_file_button.bind("<Leave>", self.on_exit)
+        self.save_file_button.pack()
+        self.style_dict.append([self.save_file_button, "Secondary", "Text"])
+
+        #cancel Button
+        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, text="Cancel",
+                                       command=self.input_widget.destroy)
+        self.cancel_button.bind("<Enter>", self.on_enter)
+        self.cancel_button.bind("<Leave>", self.on_exit)
+        self.cancel_button.pack()
+        self.style_dict.append([self.cancel_button, "Secondary", "Text"])
+
+        try:
+            with open(self.filename, "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    self.file_edit.insert(END, line)
+        except FileNotFoundError or Exception:
+            pass
+
+    def SaveFile(self):
+        nlCount = 0
+        lyst = self.file_edit.get(1.0, END)
+        for line in lyst:
+            if line == "\n":
+                nlCount += 1
+        if nlCount > 100:
+           self.ErrorMessageSave("Too many lines- won't fit in register! Will result in Error!")
+
+        f = asksaveasfile(initialfile='Untitled.txt',
+                          defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
+        try:
+            f.write(self.file_edit.get(1.0, END))
+            self.filename = f.name
+            self.our_label.configure(text="Selected File: " + self.filename)
+            self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
+            f.close()
+        except AttributeError:
+            self.ErrorMessageSave("Save Failed!")
+
+
+
+
+    def ErrorMessageSave(self, ourText):
+        Error_message = Toplevel(self.input_widget)
+
+        Error_message.configure(background="#ffffff")
+        Error_message.title("Warning!")
+        Error_message.geometry("200x30")
+
+        Error_Text = Label(Error_message, text=ourText,
+                           foreground="black")
+        Error_Text.pack()
 
     def ChangeColors(self):
         self.color_select = Toplevel(self.our_window)
