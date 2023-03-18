@@ -37,6 +37,7 @@ class UVSim():
                 # if it is greater or less than 5, then it is not something our program should recognize. we need
                 # to throw a warning or something.
                 print(input_text[item], " is an invalid command!16")
+                self.GUI.insert_output(input_text[item] + " is an invalid command!")
                 # not sure if we should exit here or continue forward. I'll ask you guys.
             elif input_text[item][0] == "-" or input_text[item][0] == "+":
                 if input_text[item][0] == "-":
@@ -52,8 +53,10 @@ class UVSim():
                         self.memory_dict[str(item)] = [temp_bool, input_text[item][1:5]]
                         self.instruction_amount += 1
                 except ValueError:
+                    self.GUI.insert_output(input_text[str(item)] + " is an invalid command!")
                     print(input_text[str(item)], " is an invalid command! 31")
             else:
+                self.GUI.insert_output(input_text[item] + " is an invalid command!")
                 print(input_text[item], " is an invalid command!33")
         # begins to process each instruction
 
