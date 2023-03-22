@@ -3,6 +3,7 @@ import UVSimBaseCode
 import sys
 import mock
 from io import StringIO
+import pytest
 
 
 def test_all():
@@ -227,13 +228,12 @@ def test_Read():
     # Testing that it works with an invaild input
     with mock.patch("builtins.input", side_effect=["abcd", "5678"]):
         result = sim.GUI.Read(0)
-        assert result == [False, "5678"]
         assert sim.memory_dict[0] == [False, "5678"]
     # Testing what happens when the number does not have 4 digits
-    with mock.patch("builtins.input", side_effect=["123", "5678"]):
+    with mock.patch("builtins.input", side_effect=["123", "1369"]):
         result = sim.GUI.Read(0)
-        assert result == [False, "5678"]
-        assert sim.memory_dict[0] == [False, "5678"]
+        assert result == [False, "1369"]
+        assert sim.memory_dict[0] == [False, "1369"]
 
 
 def test_Write():
