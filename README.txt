@@ -14,6 +14,10 @@ To run an instruction file through the UVSim, click the "Choose your instruction
 
 The program will run your instructions given by the chosen .txt file and prompt you to enter any needed inputs after a read instruction is processed.
 
+To change the colors of the GUI, click File > Color Preferences. This will open up a menu showing the current colors and the options available. Simply select the one you'd like to change and pick a color from the menu. Click "Reset to Default" to change the colors back to the default UVU colors.
+
+
+
 example.txt :
 -------------------------------------------------------------
 +1009
