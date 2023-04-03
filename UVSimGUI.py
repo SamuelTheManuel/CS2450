@@ -1,163 +1,399 @@
-from UVSim_Calculations import UVSim_Calculations
-from UVSimGUI import UVSimGUI
+from tkinter import *
+from tkinter import filedialog as fd, ttk
+from tkinter.filedialog import asksaveasfile
 
-class UVSim():
-    def __init__(self, test_bool=False):
-        # dict entries are like: register_number(string): [DataBool(bool), contents(string)]. DataBool indicates whether
-        # the contents are a value or not. if it is false, the contents are an instruction. if it is true, the contents
-        # should be ignored.
+import PIL
+import PIL.Image
+from PIL import ImageTk
+
+from UVSimGUIColor import UVSimGUIColor
+
+
+class UVSimGUI:
+    def __init__(self, UVSim, test_bool):
         self.line_limit = 250
+        self.UVS = UVSim
         self.test_bool = test_bool
-        self.memory_dict = {}
-        self.accumulator = [False, "000000"]
-        self.instruction_amount = 0
-        self.Calc = UVSim_Calculations(self)
-        self.GUI = UVSimGUI(self, self.test_bool)
-        self.initialize_memory()
-        if(test_bool is False):
-            self.GUI.our_window.mainloop()
+        self.style_dict = []
 
-    def initialize_memory(self):
+        self.default_primary_color = "#78be20"
+        self.default_secondary_color = "#275D38"
+        self.default_tertiary_color = "#a7a8aa"
+        self.default_text_color = "#FFFFFF"
+        self.default_secondary_text_color = "#000000"
+        self.default_output = "#ffffff"
+        self.default_output_text = "#000000"
+        self.Error_message = None
+
         if self.test_bool is False:
-            self.GUI.insert_output("Initializing Memory...")
-        for i in range(self.line_limit):  # initiallizes our co
-            our_key = i
-            if i <= 9:
-                our_key = "00" + str(our_key)
-            else:
-                our_key = "0" + str(our_key)
-            self.memory_dict[our_key] = [True, "000000"]
-        if self.test_bool is False:
-            self.GUI.insert_output("Memory Set!")
+            self.filename = ""
+            self.primary_color = "#78be20"
+            self.secondary_color = "#275D38"
+            self.text_color = "#FFFFFF"
+            self.secondary_text_color = "#000000"
+            self.tertiary_color = "#a7a8aa"
+            self.output_bg = "#ffffff"
+            self.output_text = "#000000"
+            self.initialize_GUI()
+
+    def initialize_GUI(self):
+        mod_int = 20
+        self.our_window = Tk()
+        self.our_window.title("UVSim")
+        self.our_window.resizable(False, False)
+        self.our_window.geometry('600x300')
+        self.our_window.configure(bg=self.primary_color, highlightcolor=self.tertiary_color)
+
+        # open file button
+        self.open_file_button = Button(self.our_window, text="Choose instruction file:  ", command=self.select_file)
+        self.open_file_button.configure(background=self.secondary_color, font=("Constantia", "10"), foreground=self.text_color)
+        self.open_file_button.bind("<Enter>", self.on_enter)
+        self.open_file_button.bind("<Leave>", self.on_exit)
+        self.open_file_button.place(x=75, y=60 + mod_int)
+        self.style_dict.append([self.open_file_button, "Secondary", "Text"])
+
+        # new file button
+        self.new_file_button = Button(self.our_window, text="New File:", command=self.new_file)
+        self.new_file_button.configure(background=self.secondary_color, font=("Constantia", "10"), foreground=self.text_color)
+        self.new_file_button.bind(("<Enter>"), self.on_enter)
+        self.new_file_button.bind("<Leave>", self.on_exit)
+        self.new_file_button.place(x=155, y=100 + mod_int)
+        self.style_dict.append([self.new_file_button, "Secondary", "Text"])
+
+        # Edit file button
+        self.edit_file_button = Button(self.our_window, text="Edit File:", command=self.edit_file)
+        self.edit_file_button.configure(background=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
+        self.edit_file_button.bind(("<Enter>"), self.on_enter)
+        self.edit_file_button.bind("<Leave>", self.on_exit)
+        self.edit_file_button.place(x=85, y=100 + mod_int)
+        self.style_dict.append([self.edit_file_button, "Tertiary", "SecondaryText"])
+
+        #filemenu
+        self.menubar = Menu(self.our_window)
+        self.file_menu = Menu(self.menubar, tearoff=0, title="File")
+        # self.file_menu.add_command(label="Save", command= EDIT this is where you can save your file? or maybe we change to new file and it opens a new dialogue to make a text document.)
+        #if we do a new file option let's have it open like the text editing app on their thing maybe? probs not
+        self.file_menu.add_command(label="Color Preferences", command=self.ChangeColors)
+        self.menubar.add_cascade(label="File", menu=self.file_menu)
+        self.our_window.config(menu=self.menubar)
+
+        # process instructions file
+        self.enter_button = Button(self.our_window, text="Run Program", command=self.process_file)
+        self.enter_button.configure(bg=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
+        self.enter_button.bind("<Enter>", self.on_enter)
+        self.enter_button.bind("<Leave>", self.on_exit)
+        self.enter_button.place(x=105, y=140 + mod_int)
+        self.style_dict.append([self.enter_button, "Tertiary", "SecondaryText"])
 
 
-    def initiate_process(self, input_text):
-        # loads each instruction into the corresponding register
-        for item in range(len(input_text)):
-            if len(input_text[item]) == 5:
-                # if it is greater or less than 7, then it is not something our program should recognize. we need
-                # to throw a warning or something.
-                #input_text[item] =
-                pass
-                # not sure if we should exit here or continue forward. I'll ask you guys.
-            elif input_text[item][0] == "-" or input_text[item][0] == "+":
-                if input_text[item][0] == "-":
-                    temp_bool = False
-                else:
-                    temp_bool = True
-                try:
-                    int(input_text[item][1:4])  # checks if the inside can be made ints since our words will be ints.
-                    if item <= 9:
-                        self.memory_dict["0" + str(item)] = [temp_bool, input_text[item][1:5]]
-                        self.instruction_amount += 1
-                    else:
-                        self.memory_dict[str(item)] = [temp_bool, input_text[item][1:5]]
-                        self.instruction_amount += 1
-                except ValueError:
-                    self.GUI.insert_output(input_text[str(item)] + " is an invalid command!")
-                    print(input_text[str(item)], " is an invalid command! 31")
-            else:
-                self.GUI.insert_output(input_text[item] + " is an invalid command!")
-                print(input_text[item], " is an invalid command!33")
-        # begins to process each instruction
+        #logo
+        self.uvsimLogo = PIL.Image.open("UVSim_Logo.png")
+        self.uvsimLogo = self.uvsimLogo.resize(size=(100, 50))
+        self.render = ImageTk.PhotoImage(self.uvsimLogo)
+        self.logo = Label(image=self.render, borderwidth=0)
+        self.logo.place(x=100, y=0 + mod_int)
 
-        instruction_line = 0  # index for the instruction we're on
-        while instruction_line < 100:
-            temp_reg = str(instruction_line)
-            if instruction_line <= 9:
-                temp_instruction = self.memory_dict[f"0{instruction_line}"]
-                temp_reg = f"0{instruction_line}"
-            else:
-                temp_instruction = self.memory_dict[temp_reg]
-            if not temp_instruction[0]:
-                instruction_line += 1
-                pass
-            else:
-                our_instruction = temp_instruction[1][0:2]
-                our_register = temp_instruction[1][2:4]
-                if our_instruction == "40":
-                    instruction_line = int(our_register)
-                elif our_instruction == "41":
-                    instruction_line = self.BranchNeg(instruction_line, int(our_register))
-                elif our_instruction == "42":
-                    instruction_line = self.BranchZero(instruction_line, int(our_register))
-                elif our_instruction == "43":
-                    break  # break out of the loop if we reach a halt.
-                else:
-                    self.process_instructions(our_instruction, our_register)
-                    instruction_line += 1  # incrament
-        if self.test_bool is False:
-            self.GUI.insert_output("\nFinished!")
+        #Label:
+        self.our_label = Label(self.our_window, text="Selected File: ", font=("Constantia", 10), background=self.primary_color, foreground=self.secondary_text_color)
+        self.our_label.place(x=20, y=270)
+        self.style_dict.append([self.our_label, "Primary", "SecondaryText"])
 
-    def process_instructions(self, our_instruction, our_register):
-        if our_instruction == "10":  # call Read
-            # passes in the register which needs to be assigned the input
-            self.GUI.Read(our_register)
-        elif our_instruction == "11":  # call Write.
-            # passes in the register whose contents should be read.
-            self.GUI.Write(our_register)
-        elif our_instruction == "20":  # call Load
-            # passes in register contents which must be loaded into the accumulator
-            self.Load(self.memory_dict[our_register])
-        elif our_instruction == "21":  # call Store
-            # passes in register who will have the contents from the accumulator
-            self.Store(our_register)
-        elif our_instruction == "30":  # call ADD
-            # passes in register contents that needs to be added to accumulator.
-            # leave result in the accumulator
-            self.Calc.Add(self.memory_dict[our_register][1])
-        elif our_instruction == "31":  # call Subtract
-            # passes in register contents that needs to be subtracted to accumulator.
-            # leave result in the accumulator
-            self.Calc.Subtract(self.memory_dict[our_register][1])
-        elif our_instruction == "32":  # call Divide
-            # passes in register contents that needs to be Divided to accumulator.
-            # leave result in the accumulator
-            self.Calc.Divide(self.memory_dict[our_register][1])
-        elif our_instruction == "33":  # call Multiply
-            # passes in register contents that needs to be multiplied to accumulator.
-            # leave result in the accumulator
-            self.Calc.Multiply(self.memory_dict[our_register][1])
+
+        v = Scrollbar(self.our_window, orient="vertical")
+        self.our_output = Text(self.our_window, font=("Constantia", 10), yscrollcommand=v.set, background=self.output_bg, foreground=self.output_text, width=35, height=14)
+        self.our_output.insert(CURRENT, "Output: ")
+        self.our_output.configure(state="disabled")
+        v.config(command=self.our_output.yview)
+        self.our_output.place(x=300, y=50)
+        self.style_dict.append([self.our_output, "OutputBg", "OutputText"])
+
+
+        self.memory_button = Button(self.our_window, font=("Constantia", 10), text="Display Register Contents", command=self.display_memory, background=self.secondary_color, foreground=self.text_color)
+        self.memory_button.bind("<Enter>", self.on_enter)
+        self.memory_button.bind("<Leave>", self.on_exit)
+        self.memory_button.place(x=300, y=20)
+        self.style_dict.append([self.memory_button, "Secondary", "Text"])
+
+
+        self.initialize_memory_button = Button(self.our_window, font=("Constantia", 10), text="Reset Memory", command=self.UVS.initialize_memory, background=self.tertiary_color, foreground=self.secondary_text_color)
+        self.initialize_memory_button.bind("<Enter>", self.on_enter)
+        self.initialize_memory_button.bind("<Leave>", self.on_exit)
+        self.initialize_memory_button.place(x=460, y=20)
+        self.style_dict.append([self.initialize_memory_button, "Tertiary", "SecondaryText"])
+
+
+    def select_file(self):
+        allowed_file_types = [('text files', "*.txt")]
+        self.filename = fd.askopenfilename(title="Choose your instruction .txt file: ", initialdir='/', filetypes=allowed_file_types)
+        self.our_label.configure(text="Selected File: " + self.filename)
+        self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
+
+    def process_file(self):
+        if self.filename == "":
+            self.insert_output("Please Try again! Invalid File.")
         else:
-            # I don't know what to do with these since they're not instructions.
-            self.memory_dict[our_register][0] = False
+            our_string = self.input_validation(self.filename).strip().split()
+            if our_string == "Please try again!":
+                pass
+            else:
+                self.UVS.initiate_process(our_string)
 
-    def BranchNeg(self, instruction_line, our_register):
-        '''Branch negative method. If accumulator is negative branch to specific
-        register location otherwise, keep going throuhg the program as normal.'''
-        if int(self.accumulator[1]) < 0:
-            instruction_line = our_register  # branch to specific mem location
-            return instruction_line
-
-        instruction_line += 1  # incrament the instruction line to go to next instruction
-        return instruction_line
-
-    def BranchZero(self, instruction_line, our_register):
-        '''Branch Zero method. If accumulator is zero branch to specific
-           register location otherwise, keep going throuhg the program as normal'''
-        if int(self.accumulator[1]) == 0:
-            instruction_line = our_register  # branch to specific mem location
-            return instruction_line
-
-        instruction_line += 1  # incrament the instruction line to go to next instruction
-        return instruction_line
-
-    # validates input from user. if it is not a valid file path, it asks for a new file path.
+    def user_input_setup(self):
+        self.input_window = Toplevel(self.our_window)
+        self.input_window.title("Input: ")
+        self.input_window.geometry("300x75")
+        self.input_window.configure(background=self.primary_color)
+        self.input_window.grab_set()
+        self.style_dict.append([self.input_window, "Primary", "Text"])
 
 
-    def Load(self, val):
-        '''load a word from a specific location in memory(val) into the accumulator'''
-        self.accumulator = val
-
-    def Store(self, val):
-        '''store a word from the accumulator into a specific location(val) in memory'''
-        self.memory_dict[val] = self.accumulator
+        self.label = Label(self.input_window, text="Please Input a 4 character word. I.E. 0234", font=("Constantia", 10), background=self.output_bg, foreground=self.output_text)
+        self.label.pack()
+        self.style_dict.append([self.label, "OutputBg", "OutputText"])
 
 
-def main():
-    uvs = UVSim()
+        self.entry = Entry(self.input_window, width=30, background=self.output_bg, foreground=self.output_text, insertbackground=self.output_bg)
+        self.style_dict.append([self.entry, "OutputBG", "OutputText"])
+
+
+        #entry
+        self.entry.focus_set()
+        self.entry.pack()
+
+        #button
+        self.our_button = Button(self.input_window, text="Enter", command=self.enter_button_set, background=self.secondary_color, foreground=self.text_color)
+        self.our_button.bind("<Enter>", self.on_enter)
+        self.our_button.bind("<Leave>", self.on_exit)
+        self.style_dict.append([self.open_file_button, "Secondary", "Text"])
+        self.our_button.pack()
+
+    def user_input(self):
+        self.var = IntVar()
+        self.our_button.wait_variable(self.var)
+        self.input_enter_press = False
+        return self.our_input
+
+    def enter_button_set(self):
+        self.our_input = self.entry.get()
+        self.insert_output(self.our_input + "\n")
+        self.var.set(1)
+        self.our_button.destroy()
+        self.label.destroy()
+        self.entry.destroy()
+        self.input_window.destroy()
+
+    def insert_output(self, output_string):
+        self.our_output.configure(state="normal")
+        self.our_output.insert(END, "\n" + str(output_string))
+        self.our_output.configure(state="disabled")
+
+    def display_memory(self):
+        self.insert_output("\n")
+        for register in self.UVS.memory_dict:
+            self.insert_output("Register: " + f"{register} - Contents: " + f"{self.UVS.memory_dict[register][1]}")
+        self.insert_output("\n")
+
+    def Read(self, register):
+        # instrucion 10 Read a word from the keyboard into a specific location in memory.
+        # A word is a signed four-digit decimal number, such as +1234, -5678.
+        if self.test_bool is False:
+            self.user_input_setup()
+            input_text = self.user_input()
+        else:
+            input_text = input("Please input a four-digit value: ")
+        try:
+            temp = int(input_text.strip())
+            while (not (isinstance(temp, int) and len((input_text))) == 4):
+                if self.test_bool is False:
+                    self.insert_output(input_text + " is an invalid word!")
+                    input_text = self.user_input()
+                else:
+                    print("Invalid input!")
+                    input_text = input("Please try again. (I.e. 1234 or 0243): ")
+                temp = int(input_text)
+            self.UVS.memory_dict[register] = [False, input_text]
+            return self.UVS.memory_dict[register]
+        except ValueError:
+            if self.test_bool is False:
+                self.insert_output(input_text + " is an invalid word!")
+            else:
+                print(f"{input_text} is an invalid word!")
+            self.Read(register)
+
+    def Write(self, register):
+        # instruciton 11 Write a word from a specific location in memory to screen.
+        # self.memory_dict[int(val)] = [True, self.accumulator]
+        if register in self.UVS.memory_dict:
+            if self.test_bool is False:
+                self.insert_output(f'{self.UVS.memory_dict[register][1]}')
+            else:
+                print(f'{self.UVS.memory_dict[register][1]}')
+            return {self.UVS.memory_dict[register][1]}
+
+    def input_validation(self, our_input=None):
+        """
+        Validates user input. Valid input is an existing file path.
+        :return: the text within that file as a string.
+        """
+        args = our_input
+        try:
+            if args is None:
+                our_string = ""
+                args = input("Please provide full input file path here: ")  # takes user input
+            if args == "quit":  # ends program
+                exit()
+            with open(args, "r") as input_file:  # attempts to open the file given
+                our_string = input_file.read()
+            return our_string
+        except FileNotFoundError:  # if the file doesn't exist, retry.
+            return "Please try again!"
+
+    def on_enter(self, e):
+        e.widget["foreground"], e.widget["background"] = e.widget["background"], e.widget["foreground"]
+
+    def on_exit(self, e):
+        e.widget["foreground"], e.widget["background"] = e.widget["background"], e.widget["foreground"]
+
+    def new_file(self):
+        self.filename = ""
+        self.edit_file()
+
+    def edit_file(self):
+        self.input_widget = Toplevel(self.our_window)
+        self.input_widget.title("Edit File")
+        self.input_widget.geometry("400x300")
+        self.input_widget.configure(background="#ffffff")
+        self.input_widget.grab_set()
+
+        v = Scrollbar(self.input_widget, orient="vertical")
+        self.file_edit = Text(self.input_widget, font=("Constantia", 10), yscrollcommand=v.set,
+                               background=self.output_bg, foreground=self.output_text, width=35, height=14)
+        v.config(command=self.file_edit.yview)
+        self.line_num = Label(self.input_widget, text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)),
+                              foreground=self.primary_color, background=self.text_color)
+
+        self.file_edit.bind('<KeyRelease>', self.LineChange)
+        self.file_edit.bind('<ButtonRelease>', self.LineChange)
+        #self.file_edit.bind('<Return>', self.LineChange)
+
+        self.style_dict.append([self.line_num, "Primary", "Text"])
+
+        self.file_edit.focus()
+        self.line_num.pack()
+
+        self.file_edit.pack()
+        self.style_dict.append([self.our_output, "OutputBg", "OutputText"])
+
+        #save File Button
+        self.save_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, command=self.SaveFile, text="Save File")
+        self.save_file_button.bind("<Enter>", self.on_enter)
+        self.save_file_button.bind("<Leave>", self.on_exit)
+        self.save_file_button.pack()
+        self.style_dict.append([self.save_file_button, "Secondary", "Text"])
+
+        #cancel Button
+        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, text="Cancel",
+                                       command=self.input_widget.destroy)
+        self.cancel_button.bind("<Enter>", self.on_enter)
+        self.cancel_button.bind("<Leave>", self.on_exit)
+        self.cancel_button.pack()
+        self.style_dict.append([self.cancel_button, "Secondary", "Text"])
+
+        try:
+            with open(self.filename, "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    self.file_edit.insert(END, line)
+        except FileNotFoundError or Exception:
+            pass
+
+    def SaveFile(self):
+        nlCount = 0
+        lyst = self.file_edit.get(1.0, END)
+        for line in lyst:
+            if line == "\n":
+                nlCount += 1
+        if nlCount > self.line_limit:
+           self.ErrorMessageSave("Too many lines- won't fit in register! Will result in Error!")
+
+        f = asksaveasfile(initialfile='Untitled.txt',
+                          defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
+        try:
+            f.write(self.file_edit.get(1.0, END))
+            self.filename = f.name
+            self.our_label.configure(text="Selected File: " + self.filename)
+            self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
+            f.close()
+        except AttributeError:
+            self.ErrorMessageSave("Save Failed!")
+
+    def LineChange(self, idk):
+        self.line_num.config(text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)))
+        if int(float(self.file_edit.index(INSERT.split(".")[0]))) >= self.line_limit:
+            self.ErrorMessageSave("Too many lines!")
+            self.file_edit.mark_set("insert", "%d.%d" % (0, 0))
+
+    def ErrorMessageSave(self, ourText):
+        self.Error_message = Toplevel(self.input_widget)
+
+        self.Error_message.configure(background="#ffffff")
+        self.Error_message.title("Warning!")
+        self.Error_message.geometry("200x30")
+
+        self.Error_Text = Label(self.Error_message, text=ourText,
+                           foreground="black")
+        self.Error_Text.pack()
+
+    def ChangeColors(self):
+        self.color_select = Toplevel(self.our_window)
+        self.color_select.title("Colors: ")
+        self.color_select.geometry("300x400")
+        self.color_select.configure(background="#ffffff")
+        self.color_select.grab_set()
+
+        self.GUIColor = UVSimGUIColor(self)
+        self.reset_all_color_button = Button(self.color_select,font=("Constantia", 15), background=self.default_primary_color, foreground="white", text="Reset to Default", command=self.GUIColor.ResetColorsToDefault)
+        self.primary_color_button = Button(self.color_select,font=("Constantia", 15), background=self.primary_color, foreground=self.text_color, text="Primary Color: ", command=self.GUIColor.ChangePrimaryColor)
+        self.secondary_color_button = Button(self.color_select,font=("Constantia", 15), background=self.secondary_color, foreground=self.text_color, text="Secondary Color: ", command=self.GUIColor.ChangeSecondaryColor)
+        self.tertiary_color_button = Button(self.color_select,font=("Constantia", 15), background=self.tertiary_color, foreground=self.secondary_text_color, text="Tertiary Color: ", command=self.GUIColor.ChangeTertiaryColor)
+        self.text_color_button = Button(self.color_select,font=("Constantia", 15), background=self.text_color, foreground=self.primary_color, text="Text Color: ", command=self.GUIColor.ChangeTextColor)
+        self.secondary_text_button = Button(self.color_select,font=("Constantia", 15), background=self.secondary_text_color, foreground=self.tertiary_color, text="Secondary Text Color: ", command=self.GUIColor.ChangeSecondaryTextColor)
+        self.output_color_button = Button(self.color_select, text= "Output Box", font=("Constantia", 15), background=self.output_bg, foreground=self.primary_color, command=self.GUIColor.ChangeOutputBG)
+        self.output_text_button = Button(self.color_select, text="Output Text", font=("Constantia", 15), background=self.output_text, foreground= self.secondary_color, command=self.GUIColor.ChangeOutputText)
+
+        self.style_dict.append([self.primary_color_button, "Primary", "Text"])
+        self.style_dict.append([self.secondary_color_button, "Secondary", "Text"])
+        self.style_dict.append([self.tertiary_color_button, "Tertiary", "SecondaryText"])
+        self.style_dict.append([self.text_color_button, "Text", "Primary"])
+        self.style_dict.append([self.secondary_text_button, "SecondaryText", "Tertiary"])
+        self.style_dict.append([self.output_color_button, "OutputBg", "Primary"])
+        self.style_dict.append([self.output_text_button, "OutputText", "Secondary"])
 
 
 
-if __name__ == '__main__':
-    main()
+        self.reset_all_color_button.bind("<Enter>", self.on_enter)
+        self.reset_all_color_button.bind("<Leave>", self.on_exit)
+        self.primary_color_button.bind("<Enter>", self.on_enter)
+        self.primary_color_button.bind("<Leave>", self.on_exit)
+        self.secondary_color_button.bind("<Enter>", self.on_enter)
+        self.secondary_color_button.bind("<Leave>", self.on_exit)
+        self.secondary_text_button.bind("<Enter>", self.on_enter)
+        self.secondary_text_button.bind("<Leave>", self.on_exit)
+        self.tertiary_color_button.bind("<Enter>", self.on_enter)
+        self.tertiary_color_button.bind("<Leave>", self.on_exit)
+        self.text_color_button.bind("<Enter>", self.on_enter)
+        self.text_color_button.bind("<Leave>", self.on_exit)
+        self.output_color_button.bind("<Enter>", self.on_enter)
+        self.output_color_button.bind("<Leave>", self.on_exit)
+        self.output_text_button.bind("<Enter>", self.on_enter)
+        self.output_text_button.bind("<Leave>", self.on_exit)
+
+        self.reset_all_color_button.pack()
+        self.primary_color_button.pack()
+        self.secondary_color_button.pack()
+        self.tertiary_color_button.pack()
+        self.text_color_button.pack()
+        self.secondary_text_button.pack()
+        self.output_color_button.pack()
+        self.output_text_button.pack()
+
