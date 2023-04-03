@@ -1,6 +1,8 @@
+import os.path
 from tkinter import *
-from tkinter import filedialog as fd, ttk
+from tkinter import filedialog as fd
 from tkinter.filedialog import asksaveasfile
+from pathlib import Path
 
 import PIL
 import PIL.Image
@@ -11,10 +13,11 @@ from UVSimGUIColor import UVSimGUIColor
 
 class UVSimGUI:
     def __init__(self, UVSim, test_bool):
-        self.line_limit = 250
+        self.line_limit = 10
         self.UVS = UVSim
         self.test_bool = test_bool
         self.style_dict = []
+        self.cut_file_name = ""
 
         self.default_primary_color = "#78be20"
         self.default_secondary_color = "#275D38"
@@ -61,7 +64,7 @@ class UVSimGUI:
         self.style_dict.append([self.new_file_button, "Secondary", "Text"])
 
         # Edit file button
-        self.edit_file_button = Button(self.our_window, text="Edit File:", command=self.edit_file)
+        self.edit_file_button = Button(self.our_window, text="Edit File:", command=self.edit_file_setup)
         self.edit_file_button.configure(background=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
         self.edit_file_button.bind(("<Enter>"), self.on_enter)
         self.edit_file_button.bind("<Leave>", self.on_exit)
@@ -71,8 +74,6 @@ class UVSimGUI:
         #filemenu
         self.menubar = Menu(self.our_window)
         self.file_menu = Menu(self.menubar, tearoff=0, title="File")
-        # self.file_menu.add_command(label="Save", command= EDIT this is where you can save your file? or maybe we change to new file and it opens a new dialogue to make a text document.)
-        #if we do a new file option let's have it open like the text editing app on their thing maybe? probs not
         self.file_menu.add_command(label="Color Preferences", command=self.ChangeColors)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         self.our_window.config(menu=self.menubar)
@@ -120,7 +121,6 @@ class UVSimGUI:
         self.initialize_memory_button.bind("<Leave>", self.on_exit)
         self.initialize_memory_button.place(x=460, y=20)
         self.style_dict.append([self.initialize_memory_button, "Tertiary", "SecondaryText"])
-
 
     def select_file(self):
         allowed_file_types = [('text files', "*.txt")]
@@ -256,14 +256,20 @@ class UVSimGUI:
 
     def new_file(self):
         self.filename = ""
+        self.cut_file_name = "Edit File: "
+        self.edit_file()
+
+    def edit_file_setup(self):
+        self.select_file()
+        self.cut_file_name = os.path.basename(self.filename)
         self.edit_file()
 
     def edit_file(self):
         self.input_widget = Toplevel(self.our_window)
-        self.input_widget.title("Edit File")
-        self.input_widget.geometry("400x300")
+        self.input_widget.title(self.cut_file_name)
+        self.input_widget.geometry("400x330")
         self.input_widget.configure(background="#ffffff")
-        self.input_widget.grab_set()
+        #self.input_widget.grab_set()
 
         v = Scrollbar(self.input_widget, orient="vertical")
         self.file_edit = Text(self.input_widget, font=("Constantia", 10), yscrollcommand=v.set,
@@ -274,7 +280,6 @@ class UVSimGUI:
 
         self.file_edit.bind('<KeyRelease>', self.LineChange)
         self.file_edit.bind('<ButtonRelease>', self.LineChange)
-        #self.file_edit.bind('<Return>', self.LineChange)
 
         self.style_dict.append([self.line_num, "Primary", "Text"])
 
@@ -294,6 +299,14 @@ class UVSimGUI:
         #cancel Button
         self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, text="Cancel",
                                        command=self.input_widget.destroy)
+        self.cancel_button.bind("<Enter>", self.on_enter)
+        self.cancel_button.bind("<Leave>", self.on_exit)
+        self.cancel_button.pack()
+        self.style_dict.append([self.cancel_button, "Secondary", "Text"])
+
+        #save and run button
+        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, text="Save and Run",
+                                       command=self.save_and_run)
         self.cancel_button.bind("<Enter>", self.on_enter)
         self.cancel_button.bind("<Leave>", self.on_exit)
         self.cancel_button.pack()
@@ -324,12 +337,14 @@ class UVSimGUI:
             self.our_label.configure(text="Selected File: " + self.filename)
             self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
             f.close()
+            return True
         except AttributeError:
             self.ErrorMessageSave("Save Failed!")
+            return False
 
     def LineChange(self, idk):
         self.line_num.config(text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)))
-        if int(float(self.file_edit.index(INSERT.split(".")[0]))) >= self.line_limit:
+        if int(float(self.file_edit.index(INSERT.split(".")[0]))) > self.line_limit:
             self.ErrorMessageSave("Too many lines!")
             self.file_edit.mark_set("insert", "%d.%d" % (0, 0))
 
@@ -397,3 +412,8 @@ class UVSimGUI:
         self.output_color_button.pack()
         self.output_text_button.pack()
 
+    def save_and_run(self):
+        if(self.SaveFile()):
+            self.process_file()
+        else:
+            self.ErrorMessageSave("Error with save!")
