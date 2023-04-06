@@ -8,7 +8,7 @@ class UVSim_Calculations:
         accumulator = self.UVS.accumulator[1]
         new_accumulator = str(int(accumulator) + int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 7:
             if new_accumulator[1][0] == '-':
                 new_accumulator[1] = '-0' + new_accumulator[1][1:]
             else:
@@ -23,7 +23,7 @@ class UVSim_Calculations:
         accumulator = self.UVS.accumulator[1]
         new_accumulator = str(int(accumulator) - int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 7:
             if new_accumulator[1][0] == '-':
                 new_accumulator[1] = '-0' + new_accumulator[1][1:]
             else:
@@ -38,7 +38,7 @@ class UVSim_Calculations:
         accumulator = self.UVS.accumulator[1]
         new_accumulator = str(int(accumulator) * int(register_word))
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 7:
             if new_accumulator[1][0] == '-':
                 new_accumulator[1] = '-0' + new_accumulator[1][1:]
             else:
@@ -57,7 +57,7 @@ class UVSim_Calculations:
             print("Unable to divide by zero.")
             return "Divide by zero error"
         new_accumulator = [False, new_accumulator]
-        while len(new_accumulator[1]) < 5:
+        while len(new_accumulator[1]) < 7:
             if new_accumulator[1][0] == '-':
                 new_accumulator[1] = '-0' + new_accumulator[1][1:]
             else:
