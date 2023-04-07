@@ -221,31 +221,31 @@ def test_divide2():
 def test_Read():
     # Testing that it works with a valid input
     sim = UVSim(test_bool=True)
-    with mock.patch("builtins.input", return_value="1234"):
+    with mock.patch("builtins.input", return_value="012345"):
         result = sim.GUI.Read(0)
-        assert result == [False, "1234"]
-        assert sim.memory_dict[0] == [False, "1234"]
+        assert result == [False, "012345"]
+        assert sim.memory_dict[0] == [False, "012345"]
     # Testing that it works with an invaild input
-    with mock.patch("builtins.input", side_effect=["abcd", "5678"]):
+    with mock.patch("builtins.input", side_effect=["abcdef", "456789"]):
         result = sim.GUI.Read(0)
-        assert sim.memory_dict[0] == [False, "5678"]
+        assert sim.memory_dict[0] == [False, "456789"]
     # Testing what happens when the number does not have 4 digits
-    with mock.patch("builtins.input", side_effect=["123", "1369"]):
+    with mock.patch("builtins.input", side_effect=["123", "136969"]):
         result = sim.GUI.Read(0)
-        assert result == [False, "1369"]
-        assert sim.memory_dict[0] == [False, "1369"]
+        assert result == [False, "136969"]
+        assert sim.memory_dict[0] == [False, "136969"]
 
 
 def test_Write():
     # Testing that it works on a vaild register
     sim = UVSim(test_bool=True)
-    sim.memory_dict = {0: [True, "1234"]}
+    sim.memory_dict = {0: [True, "123456"]}
     captured_output = StringIO()
     sys.stdout = captured_output
     result = sim.GUI.Write(0)
     sys.stdout = sys.__stdout__
-    assert result == {'1234'}
-    assert captured_output.getvalue() == "1234\n"
+    assert result == {'123456'}
+    assert captured_output.getvalue() == "123456\n"
     # Testing that it does not work with an invalid input
     captured_output = StringIO()
     sys.stdout = captured_output

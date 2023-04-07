@@ -133,6 +133,9 @@ class UVSimGUI:
             self.insert_output("Please Try again! Invalid File.")
         else:
             our_string = self.input_validation(self.filename).strip().split()
+        
+            if len(our_string[0]) == 5:
+                our_string = self.translation(our_string)
             if our_string == "Please try again!":
                 pass
             else:
@@ -147,7 +150,7 @@ class UVSimGUI:
         self.style_dict.append([self.input_window, "Primary", "Text"])
 
 
-        self.label = Label(self.input_window, text="Please Input a 4 character word. I.E. 0234", font=("Constantia", 10), background=self.output_bg, foreground=self.output_text)
+        self.label = Label(self.input_window, text="Please Input a 6 character word. I.E. 012345", font=("Constantia", 10), background=self.output_bg, foreground=self.output_text)
         self.label.pack()
         self.style_dict.append([self.label, "OutputBg", "OutputText"])
 
@@ -194,34 +197,37 @@ class UVSimGUI:
         self.insert_output("\n")
 
     def Read(self, register):
-        # instrucion 10 Read a word from the keyboard into a specific location in memory.
+        # instrucion 010 Read a word from the keyboard into a specific location in memory.
         # A word is a signed four-digit decimal number, such as +1234, -5678.
-        if self.test_bool is False:
-            self.user_input_setup()
-            input_text = self.user_input()
+        if int(register)>250:
+            print("invalid register number. Resgister limit 250")
         else:
-            input_text = input("Please input a four-digit value: ")
-        try:
-            temp = int(input_text.strip())
-            while (not (isinstance(temp, int) and len((input_text))) == 4):
+            if self.test_bool is False:
+                self.user_input_setup()
+                input_text = self.user_input()
+            else:
+                input_text = input("Please input a six-digit value: ")
+            try:
+                temp = int(input_text.strip())
+                while (not (isinstance(temp, int) and len((input_text))) == 6):
+                    if self.test_bool is False:
+                        self.insert_output(input_text + " is an invalid word!")
+                        input_text = self.user_input()
+                    else:
+                        print("Invalid input!")
+                        input_text = input("Please try again. (I.e. 012345 or 024321): ")
+                    temp = int(input_text)
+                self.UVS.memory_dict[register] = [False, input_text]
+                return self.UVS.memory_dict[register]
+            except ValueError:
                 if self.test_bool is False:
                     self.insert_output(input_text + " is an invalid word!")
-                    input_text = self.user_input()
                 else:
-                    print("Invalid input!")
-                    input_text = input("Please try again. (I.e. 1234 or 0243): ")
-                temp = int(input_text)
-            self.UVS.memory_dict[register] = [False, input_text]
-            return self.UVS.memory_dict[register]
-        except ValueError:
-            if self.test_bool is False:
-                self.insert_output(input_text + " is an invalid word!")
-            else:
-                print(f"{input_text} is an invalid word!")
-            self.Read(register)
+                    print(f"{input_text} is an invalid word!")
+                self.Read(register)
 
     def Write(self, register):
-        # instruciton 11 Write a word from a specific location in memory to screen.
+        # instruciton 011 Write a word from a specific location in memory to screen.
         # self.memory_dict[int(val)] = [True, self.accumulator]
         if register in self.UVS.memory_dict:
             if self.test_bool is False:
@@ -247,6 +253,12 @@ class UVSimGUI:
             return our_string
         except FileNotFoundError:  # if the file doesn't exist, retry.
             return "Please try again!"
+
+    def translation(self,input):
+        for i in range(len(input)):
+            input[i] = input[i][:3] + '0' + input[i][3:]
+            input [i] =input[i][:1] +'0' + input[i][1:]
+        return input
 
     def on_enter(self, e):
         e.widget["foreground"], e.widget["background"] = e.widget["background"], e.widget["foreground"]
