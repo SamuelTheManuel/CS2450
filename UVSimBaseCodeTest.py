@@ -25,35 +25,35 @@ def test_load():
     '''load a word from a specific location in memory(val) into the accumulator'''
     sim = UVSim(test_bool=True)
     # basic test
-    sim.memory_dict["21"] = [True, "5005"]
-    our_register = "21"
+    sim.memory_dict["021"] = [True, "05005"]
+    our_register = "021"
     sim.Load(sim.memory_dict[our_register])
-    assert sim.accumulator[1] == "5005"
+    assert sim.accumulator[1] == "05005"
 
     '''test if a negative number is in the val'''
     sim = UVSim(test_bool=True)
-    sim.memory_dict["20"] = [True, "-505"]
-    our_register = "20"
+    sim.memory_dict["020"] = [True, "-0505"]
+    our_register = "020"
     sim.Load(sim.memory_dict[our_register])
-    assert sim.Load(sim.memory_dict[our_register]) != "-505"
+    assert sim.Load(sim.memory_dict[our_register]) != "-0505"
 
 
 def test_store():
     '''store a word from the accumulator into a specific location(val) in memory'''
     # basic test
     sim = UVSim(test_bool=True)
-    sim.memory_dict["12"] = [True, "4321"]
-    sim.accumulator = [True, "1234"]
-    our_register = "12"
+    sim.memory_dict["012"] = [True, "04321"]
+    sim.accumulator = [True, "01234"]
+    our_register = "012"
     sim.Store(our_register)
-    assert sim.memory_dict["12"] != [True, "9999"]
+    assert sim.memory_dict["012"] != [True, "09999"]
     # test if given value is in memory
     sim = UVSim(True)
-    sim.memory_dict["42"] = [True, "1221"]
-    sim.accumulator = [True, "9999"]
-    our_register = "99"
+    sim.memory_dict["042"] = [True, "01221"]
+    sim.accumulator = [True, "09999"]
+    our_register = "099"
     sim.Store(our_register)
-    assert sim.memory_dict["42"] != [True, "9999"]
+    assert sim.memory_dict["042"] != [True, "09999"]
 
 
 def test_add1():
