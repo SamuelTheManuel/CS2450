@@ -49,7 +49,8 @@ class UVSimGUI:
 
         # open file button
         self.open_file_button = Button(self.our_window, text="Choose instruction file:  ", command=self.select_file)
-        self.open_file_button.configure(background=self.secondary_color, font=("Constantia", "10"), foreground=self.text_color)
+        self.open_file_button.configure(background=self.secondary_color, font=("Constantia", "10"),
+                                        foreground=self.text_color)
         self.open_file_button.bind("<Enter>", self.on_enter)
         self.open_file_button.bind("<Leave>", self.on_exit)
         self.open_file_button.place(x=75, y=60 + mod_int)
@@ -57,7 +58,8 @@ class UVSimGUI:
 
         # new file button
         self.new_file_button = Button(self.our_window, text="New File:", command=self.new_file)
-        self.new_file_button.configure(background=self.secondary_color, font=("Constantia", "10"), foreground=self.text_color)
+        self.new_file_button.configure(background=self.secondary_color, font=("Constantia", "10"),
+                                       foreground=self.text_color)
         self.new_file_button.bind(("<Enter>"), self.on_enter)
         self.new_file_button.bind("<Leave>", self.on_exit)
         self.new_file_button.place(x=155, y=100 + mod_int)
@@ -65,13 +67,14 @@ class UVSimGUI:
 
         # Edit file button
         self.edit_file_button = Button(self.our_window, text="Edit File:", command=self.edit_file_setup)
-        self.edit_file_button.configure(background=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
+        self.edit_file_button.configure(background=self.tertiary_color, font=("Constantia", "10"),
+                                        foreground=self.secondary_text_color)
         self.edit_file_button.bind(("<Enter>"), self.on_enter)
         self.edit_file_button.bind("<Leave>", self.on_exit)
         self.edit_file_button.place(x=85, y=100 + mod_int)
         self.style_dict.append([self.edit_file_button, "Tertiary", "SecondaryText"])
 
-        #filemenu
+        # filemenu
         self.menubar = Menu(self.our_window)
         self.file_menu = Menu(self.menubar, tearoff=0, title="File")
         self.file_menu.add_command(label="Color Preferences", command=self.ChangeColors)
@@ -80,43 +83,46 @@ class UVSimGUI:
 
         # process instructions file
         self.enter_button = Button(self.our_window, text="Run Program", command=self.process_file)
-        self.enter_button.configure(bg=self.tertiary_color, font=("Constantia", "10"), foreground=self.secondary_text_color)
+        self.enter_button.configure(bg=self.tertiary_color, font=("Constantia", "10"),
+                                    foreground=self.secondary_text_color)
         self.enter_button.bind("<Enter>", self.on_enter)
         self.enter_button.bind("<Leave>", self.on_exit)
         self.enter_button.place(x=105, y=140 + mod_int)
         self.style_dict.append([self.enter_button, "Tertiary", "SecondaryText"])
 
-
-        #logo
+        # logo
         self.uvsimLogo = PIL.Image.open("UVSim_Logo.png")
         self.uvsimLogo = self.uvsimLogo.resize(size=(100, 50))
         self.render = ImageTk.PhotoImage(self.uvsimLogo)
         self.logo = Label(image=self.render, borderwidth=0)
         self.logo.place(x=100, y=0 + mod_int)
 
-        #Label:
-        self.our_label = Label(self.our_window, text="Selected File: ", font=("Constantia", 10), background=self.primary_color, foreground=self.secondary_text_color)
+        # Label:
+        self.our_label = Label(self.our_window, text="Selected File: ", font=("Constantia", 10),
+                               background=self.primary_color, foreground=self.secondary_text_color)
         self.our_label.place(x=20, y=270)
         self.style_dict.append([self.our_label, "Primary", "SecondaryText"])
 
-
         v = Scrollbar(self.our_window, orient="vertical")
-        self.our_output = Text(self.our_window, font=("Constantia", 10), yscrollcommand=v.set, background=self.output_bg, foreground=self.output_text, width=35, height=14)
+        self.our_output = Text(self.our_window, font=("Constantia", 10), yscrollcommand=v.set,
+                               background=self.output_bg, foreground=self.output_text, width=35, height=14)
         self.our_output.insert(CURRENT, "Output: ")
         self.our_output.configure(state="disabled")
         v.config(command=self.our_output.yview)
         self.our_output.place(x=300, y=50)
         self.style_dict.append([self.our_output, "OutputBg", "OutputText"])
 
-
-        self.memory_button = Button(self.our_window, font=("Constantia", 10), text="Display Register Contents", command=self.display_memory, background=self.secondary_color, foreground=self.text_color)
+        self.memory_button = Button(self.our_window, font=("Constantia", 10), text="Display Register Contents",
+                                    command=self.display_memory, background=self.secondary_color,
+                                    foreground=self.text_color)
         self.memory_button.bind("<Enter>", self.on_enter)
         self.memory_button.bind("<Leave>", self.on_exit)
         self.memory_button.place(x=300, y=20)
         self.style_dict.append([self.memory_button, "Secondary", "Text"])
 
-
-        self.initialize_memory_button = Button(self.our_window, font=("Constantia", 10), text="Reset Memory", command=self.UVS.initialize_memory, background=self.tertiary_color, foreground=self.secondary_text_color)
+        self.initialize_memory_button = Button(self.our_window, font=("Constantia", 10), text="Reset Memory",
+                                               command=self.UVS.initialize_memory, background=self.tertiary_color,
+                                               foreground=self.secondary_text_color)
         self.initialize_memory_button.bind("<Enter>", self.on_enter)
         self.initialize_memory_button.bind("<Leave>", self.on_exit)
         self.initialize_memory_button.place(x=460, y=20)
@@ -124,7 +130,8 @@ class UVSimGUI:
 
     def select_file(self):
         allowed_file_types = [('text files', "*.txt")]
-        self.filename = fd.askopenfilename(title="Choose your instruction .txt file: ", initialdir='/', filetypes=allowed_file_types)
+        self.filename = fd.askopenfilename(title="Choose your instruction .txt file: ", initialdir='/',
+                                           filetypes=allowed_file_types)
         self.our_label.configure(text="Selected File: " + self.filename)
         self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
 
@@ -133,7 +140,7 @@ class UVSimGUI:
             self.insert_output("Please Try again! Invalid File.")
         else:
             our_string = self.input_validation(self.filename).strip().split()
-        
+
             if len(our_string[0]) == 5:
                 our_string = self.translation(our_string)
             if our_string == "Please try again!":
@@ -149,22 +156,22 @@ class UVSimGUI:
         self.input_window.grab_set()
         self.style_dict.append([self.input_window, "Primary", "Text"])
 
-
-        self.label = Label(self.input_window, text="Please Input a 6 character word. I.E. 012345", font=("Constantia", 10), background=self.output_bg, foreground=self.output_text)
+        self.label = Label(self.input_window, text="Please Input a 6 character word. I.E. 012345",
+                           font=("Constantia", 10), background=self.output_bg, foreground=self.output_text)
         self.label.pack()
         self.style_dict.append([self.label, "OutputBg", "OutputText"])
 
-
-        self.entry = Entry(self.input_window, width=30, background=self.output_bg, foreground=self.output_text, insertbackground=self.output_bg)
+        self.entry = Entry(self.input_window, width=30, background=self.output_bg, foreground=self.output_text,
+                           insertbackground=self.output_bg)
         self.style_dict.append([self.entry, "OutputBG", "OutputText"])
 
-
-        #entry
+        # entry
         self.entry.focus_set()
         self.entry.pack()
 
-        #button
-        self.our_button = Button(self.input_window, text="Enter", command=self.enter_button_set, background=self.secondary_color, foreground=self.text_color)
+        # button
+        self.our_button = Button(self.input_window, text="Enter", command=self.enter_button_set,
+                                 background=self.secondary_color, foreground=self.text_color)
         self.our_button.bind("<Enter>", self.on_enter)
         self.our_button.bind("<Leave>", self.on_exit)
         self.style_dict.append([self.open_file_button, "Secondary", "Text"])
@@ -186,9 +193,10 @@ class UVSimGUI:
         self.input_window.destroy()
 
     def insert_output(self, output_string):
-        self.our_output.configure(state="normal")
-        self.our_output.insert(END, "\n" + str(output_string))
-        self.our_output.configure(state="disabled")
+        if not self.test_bool:
+            self.our_output.configure(state="normal")
+            self.our_output.insert(END, "\n" + str(output_string))
+            self.our_output.configure(state="disabled")
 
     def display_memory(self):
         self.insert_output("\n")
@@ -199,7 +207,7 @@ class UVSimGUI:
     def Read(self, register):
         # instrucion 010 Read a word from the keyboard into a specific location in memory.
         # A word is a signed four-digit decimal number, such as +1234, -5678.
-        if int(register)>250:
+        if int(register) > 250:
             print("invalid register number. Resgister limit 250")
         else:
             if self.test_bool is False:
@@ -254,10 +262,10 @@ class UVSimGUI:
         except FileNotFoundError:  # if the file doesn't exist, retry.
             return "Please try again!"
 
-    def translation(self,input):
+    def translation(self, input):
         for i in range(len(input)):
             input[i] = input[i][:3] + '0' + input[i][3:]
-            input [i] =input[i][:1] +'0' + input[i][1:]
+            input[i] = input[i][:1] + '0' + input[i][1:]
         return input
 
     def on_enter(self, e):
@@ -281,13 +289,14 @@ class UVSimGUI:
         self.input_widget.title(self.cut_file_name)
         self.input_widget.geometry("400x330")
         self.input_widget.configure(background="#ffffff")
-        #self.input_widget.grab_set()
+        # self.input_widget.grab_set()
 
         v = Scrollbar(self.input_widget, orient="vertical")
         self.file_edit = Text(self.input_widget, font=("Constantia", 10), yscrollcommand=v.set,
-                               background=self.output_bg, foreground=self.output_text, width=35, height=14)
+                              background=self.output_bg, foreground=self.output_text, width=35, height=14)
         v.config(command=self.file_edit.yview)
-        self.line_num = Label(self.input_widget, text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)),
+        self.line_num = Label(self.input_widget,
+                              text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)),
                               foreground=self.primary_color, background=self.text_color)
 
         self.file_edit.bind('<KeyRelease>', self.LineChange)
@@ -301,24 +310,27 @@ class UVSimGUI:
         self.file_edit.pack()
         self.style_dict.append([self.our_output, "OutputBg", "OutputText"])
 
-        #save File Button
-        self.save_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, command=self.SaveFile, text="Save File")
+        # save File Button
+        self.save_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+                                       command=self.SaveFile, text="Save File")
         self.save_file_button.bind("<Enter>", self.on_enter)
         self.save_file_button.bind("<Leave>", self.on_exit)
         self.save_file_button.pack()
         self.style_dict.append([self.save_file_button, "Secondary", "Text"])
 
-        #cancel Button
-        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, text="Cancel",
-                                       command=self.input_widget.destroy)
+        # cancel Button
+        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+                                    text="Cancel",
+                                    command=self.input_widget.destroy)
         self.cancel_button.bind("<Enter>", self.on_enter)
         self.cancel_button.bind("<Leave>", self.on_exit)
         self.cancel_button.pack()
         self.style_dict.append([self.cancel_button, "Secondary", "Text"])
 
-        #save and run button
-        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color, text="Save and Run",
-                                       command=self.save_and_run)
+        # save and run button
+        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+                                    text="Save and Run",
+                                    command=self.save_and_run)
         self.cancel_button.bind("<Enter>", self.on_enter)
         self.cancel_button.bind("<Leave>", self.on_exit)
         self.cancel_button.pack()
@@ -339,7 +351,7 @@ class UVSimGUI:
             if line == "\n":
                 nlCount += 1
         if nlCount > self.line_limit:
-           self.ErrorMessageSave("Too many lines- won't fit in register! Will result in Error!")
+            self.ErrorMessageSave("Too many lines- won't fit in register! Will result in Error!")
 
         f = asksaveasfile(initialfile='Untitled.txt',
                           defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
@@ -368,7 +380,7 @@ class UVSimGUI:
         self.Error_message.geometry("200x30")
 
         self.Error_Text = Label(self.Error_message, text=ourText,
-                           foreground="black")
+                                foreground="black")
         self.Error_Text.pack()
 
     def ChangeColors(self):
@@ -379,14 +391,31 @@ class UVSimGUI:
         self.color_select.grab_set()
 
         self.GUIColor = UVSimGUIColor(self)
-        self.reset_all_color_button = Button(self.color_select,font=("Constantia", 15), background=self.default_primary_color, foreground="white", text="Reset to Default", command=self.GUIColor.ResetColorsToDefault)
-        self.primary_color_button = Button(self.color_select,font=("Constantia", 15), background=self.primary_color, foreground=self.text_color, text="Primary Color: ", command=self.GUIColor.ChangePrimaryColor)
-        self.secondary_color_button = Button(self.color_select,font=("Constantia", 15), background=self.secondary_color, foreground=self.text_color, text="Secondary Color: ", command=self.GUIColor.ChangeSecondaryColor)
-        self.tertiary_color_button = Button(self.color_select,font=("Constantia", 15), background=self.tertiary_color, foreground=self.secondary_text_color, text="Tertiary Color: ", command=self.GUIColor.ChangeTertiaryColor)
-        self.text_color_button = Button(self.color_select,font=("Constantia", 15), background=self.text_color, foreground=self.primary_color, text="Text Color: ", command=self.GUIColor.ChangeTextColor)
-        self.secondary_text_button = Button(self.color_select,font=("Constantia", 15), background=self.secondary_text_color, foreground=self.tertiary_color, text="Secondary Text Color: ", command=self.GUIColor.ChangeSecondaryTextColor)
-        self.output_color_button = Button(self.color_select, text= "Output Box", font=("Constantia", 15), background=self.output_bg, foreground=self.primary_color, command=self.GUIColor.ChangeOutputBG)
-        self.output_text_button = Button(self.color_select, text="Output Text", font=("Constantia", 15), background=self.output_text, foreground= self.secondary_color, command=self.GUIColor.ChangeOutputText)
+        self.reset_all_color_button = Button(self.color_select, font=("Constantia", 15),
+                                             background=self.default_primary_color, foreground="white",
+                                             text="Reset to Default", command=self.GUIColor.ResetColorsToDefault)
+        self.primary_color_button = Button(self.color_select, font=("Constantia", 15), background=self.primary_color,
+                                           foreground=self.text_color, text="Primary Color: ",
+                                           command=self.GUIColor.ChangePrimaryColor)
+        self.secondary_color_button = Button(self.color_select, font=("Constantia", 15),
+                                             background=self.secondary_color, foreground=self.text_color,
+                                             text="Secondary Color: ", command=self.GUIColor.ChangeSecondaryColor)
+        self.tertiary_color_button = Button(self.color_select, font=("Constantia", 15), background=self.tertiary_color,
+                                            foreground=self.secondary_text_color, text="Tertiary Color: ",
+                                            command=self.GUIColor.ChangeTertiaryColor)
+        self.text_color_button = Button(self.color_select, font=("Constantia", 15), background=self.text_color,
+                                        foreground=self.primary_color, text="Text Color: ",
+                                        command=self.GUIColor.ChangeTextColor)
+        self.secondary_text_button = Button(self.color_select, font=("Constantia", 15),
+                                            background=self.secondary_text_color, foreground=self.tertiary_color,
+                                            text="Secondary Text Color: ",
+                                            command=self.GUIColor.ChangeSecondaryTextColor)
+        self.output_color_button = Button(self.color_select, text="Output Box", font=("Constantia", 15),
+                                          background=self.output_bg, foreground=self.primary_color,
+                                          command=self.GUIColor.ChangeOutputBG)
+        self.output_text_button = Button(self.color_select, text="Output Text", font=("Constantia", 15),
+                                         background=self.output_text, foreground=self.secondary_color,
+                                         command=self.GUIColor.ChangeOutputText)
 
         self.style_dict.append([self.primary_color_button, "Primary", "Text"])
         self.style_dict.append([self.secondary_color_button, "Secondary", "Text"])
@@ -395,8 +424,6 @@ class UVSimGUI:
         self.style_dict.append([self.secondary_text_button, "SecondaryText", "Tertiary"])
         self.style_dict.append([self.output_color_button, "OutputBg", "Primary"])
         self.style_dict.append([self.output_text_button, "OutputText", "Secondary"])
-
-
 
         self.reset_all_color_button.bind("<Enter>", self.on_enter)
         self.reset_all_color_button.bind("<Leave>", self.on_exit)
@@ -425,7 +452,7 @@ class UVSimGUI:
         self.output_text_button.pack()
 
     def save_and_run(self):
-        if(self.SaveFile()):
+        if (self.SaveFile()):
             self.process_file()
         else:
             self.ErrorMessageSave("Error with save!")
