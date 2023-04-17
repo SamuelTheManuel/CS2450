@@ -1,4 +1,5 @@
 import os.path
+import tempfile
 from tkinter import *
 from tkinter import filedialog as fd
 from tkinter.filedialog import asksaveasfile
@@ -13,7 +14,8 @@ from UVSimGUIColor import UVSimGUIColor
 
 class UVSimGUI:
     def __init__(self, UVSim, test_bool):
-        self.line_limit = 10
+        self.instruction_list = ["10", "11", "20", "21", "30", "31", "32", "33", "40", "41", "42", "43"]
+        self.line_limit = 250
         self.UVS = UVSim
         self.test_bool = test_bool
         self.style_dict = []
@@ -135,18 +137,19 @@ class UVSimGUI:
         self.our_label.configure(text="Selected File: " + self.filename)
         self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
 
+    def set_file_name(self, file_name):
+        self.filename = file_name
+
     def process_file(self):
         if self.filename == "":
             self.insert_output("Please Try again! Invalid File.")
         else:
             our_string = self.input_validation(self.filename).strip().split()
-
             if len(our_string[0]) == 5:
                 our_string = self.translation(our_string)
             if our_string == "Please try again!":
-                pass
-            else:
-                self.UVS.initiate_process(our_string)
+                return
+            self.UVS.initiate_process(our_string)
 
     def user_input_setup(self):
         self.input_window = Toplevel(self.our_window)
@@ -263,10 +266,20 @@ class UVSimGUI:
             return "Please try again!"
 
     def translation(self, input):
-        for i in range(len(input)):
-            input[i] = input[i][:3] + '0' + input[i][3:]
-            input[i] = input[i][:1] + '0' + input[i][1:]
+        found = False
+        for item in range(len(input)):
+            found = False
+            for entry in range(len(self.instruction_list)):
+                if self.instruction_list[entry] in input[item][1:3] and input[item][0] is not "-":
+                    found = True
+            if found and len(input[item]) != 7:
+                input[item] = input[item][:3] + '0' + input[item][3:]
+                input[item] = input[item][:1] + '0' + input[item][1:]
+            elif not found:
+                if len(input[item]) != 7:
+                    input[item] = input[item][:1] + '00' + input[item][1:]
         return input
+
 
     def on_enter(self, e):
         e.widget["foreground"], e.widget["background"] = e.widget["background"], e.widget["foreground"]
@@ -287,7 +300,7 @@ class UVSimGUI:
     def edit_file(self):
         self.input_widget = Toplevel(self.our_window)
         self.input_widget.title(self.cut_file_name)
-        self.input_widget.geometry("400x330")
+        self.input_widget.geometry("400x350")
         self.input_widget.configure(background="#ffffff")
         # self.input_widget.grab_set()
 
@@ -318,19 +331,26 @@ class UVSimGUI:
         self.save_file_button.pack()
         self.style_dict.append([self.save_file_button, "Secondary", "Text"])
 
+        self.run_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+                                       command=self.RunFile, text="Run File")
+        self.run_file_button.bind("<Enter>", self.on_enter)
+        self.run_file_button.bind("<Leave>", self.on_exit)
+        self.run_file_button.pack()
+        self.style_dict.append([self.run_file_button, "Secondary", "Text"])
+
+        # save and run button
+        self.save_and_run = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+                                    text="Save and Run",
+                                    command=self.save_and_run)
+        self.save_and_run.bind("<Enter>", self.on_enter)
+        self.save_and_run.bind("<Leave>", self.on_exit)
+        self.save_and_run.pack()
+        self.style_dict.append([self.save_and_run, "Secondary", "Text"])
+
         # cancel Button
         self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
                                     text="Cancel",
                                     command=self.input_widget.destroy)
-        self.cancel_button.bind("<Enter>", self.on_enter)
-        self.cancel_button.bind("<Leave>", self.on_exit)
-        self.cancel_button.pack()
-        self.style_dict.append([self.cancel_button, "Secondary", "Text"])
-
-        # save and run button
-        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
-                                    text="Save and Run",
-                                    command=self.save_and_run)
         self.cancel_button.bind("<Enter>", self.on_enter)
         self.cancel_button.bind("<Leave>", self.on_exit)
         self.cancel_button.pack()
@@ -344,33 +364,51 @@ class UVSimGUI:
         except FileNotFoundError or Exception:
             pass
 
-    def SaveFile(self):
-        nlCount = 0
-        lyst = self.file_edit.get(1.0, END)
-        for line in lyst:
-            if line == "\n":
-                nlCount += 1
-        if nlCount > self.line_limit:
-            self.ErrorMessageSave("Too many lines- won't fit in register! Will result in Error!")
+    def SaveFile(self, openfiledialogue):
+        if(openfiledialogue):
+            nlCount = 0
+            lyst = self.file_edit.get(1.0, END)
+            for line in lyst:
+                if line == "\n":
+                    nlCount += 1
+            if nlCount > self.line_limit:
+                self.ErrorMessageSave("Too many lines- won't fit in register! Will result in Error!")
 
-        f = asksaveasfile(initialfile='Untitled.txt',
-                          defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
-        try:
-            f.write(self.file_edit.get(1.0, END))
-            self.filename = f.name
-            self.our_label.configure(text="Selected File: " + self.filename)
-            self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
-            f.close()
-            return True
-        except AttributeError:
-            self.ErrorMessageSave("Save Failed!")
-            return False
+            f = asksaveasfile(initialfile='Untitled.txt',
+                              defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
+            try:
+                f.write(self.file_edit.get(1.0, END))
+                self.filename = f.name
+                self.our_label.configure(text="Selected File: " + self.filename)
+                self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
+                f.close()
+                return True
+            except AttributeError:
+                self.ErrorMessageSave("Save Failed!")
+                return False
+        else:
+            if self.filename == "":
+                self.filename = tempfile.gettempdir() + "\\UVSIM_TEMP_FILE_TO_RUN.txt"
+            try:
+                with open(self.filename, "w") as f:
+                    f.write(self.file_edit.get(1.0, END))
+                    self.filename = f.name
+                    self.our_label.configure(text="Selected File: " + self.filename)
+                    self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
+                    return True
+            except AttributeError:
+                self.ErrorMessageSave("Error in save: cannot run")
+                return False
 
     def LineChange(self, idk):
         self.line_num.config(text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)))
         if int(float(self.file_edit.index(INSERT.split(".")[0]))) > self.line_limit:
             self.ErrorMessageSave("Too many lines!")
             self.file_edit.mark_set("insert", "%d.%d" % (0, 0))
+
+    def RunFile(self):
+        if self.SaveFile(False):
+            self.process_file()
 
     def ErrorMessageSave(self, ourText):
         self.Error_message = Toplevel(self.input_widget)
@@ -452,7 +490,7 @@ class UVSimGUI:
         self.output_text_button.pack()
 
     def save_and_run(self):
-        if (self.SaveFile()):
+        if (self.SaveFile(True)):
             self.process_file()
         else:
             self.ErrorMessageSave("Error with save!")
