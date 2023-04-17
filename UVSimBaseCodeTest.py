@@ -13,13 +13,30 @@ def test_all():
     '''
     uvs = UVSimBaseCode.UVSim(test_bool=True)
     file_path = r"C:\Users\Sarah\Desktop\sarah\School\2023\Spring 2023\CS 2450\UVSim\TestAll1.txt"  # whatever our file path is
+    uvs.GUI.set_file_name(file_path)
     our_string = uvs.GUI.input_validation(file_path).strip().split()
-    uvs.initiate_process(our_string)
-    print(uvs.memory_dict["22"])
-    assert uvs.memory_dict["22"][1] == "0100"
-    assert uvs.memory_dict["26"][1] == "-0442"
-    assert uvs.accumulator[1] == "-0442"
+    uvs.GUI.process_file()
+    print(uvs.memory_dict["022"])
 
+    assert uvs.memory_dict["022"][1] == "000100"
+    assert uvs.memory_dict["026"][1] == "-000442"
+    assert uvs.accumulator[1] == "-000442"
+
+
+def test_all_updated():
+    '''
+    tests all functions
+    :return:
+    '''
+    uvs = UVSimBaseCode.UVSim(test_bool=True)
+    file_path = r"C:\Users\Sarah\Desktop\sarah\School\2023\Spring 2023\CS 2450\UVSim\TestAll1Updated.txt"  # whatever our file path is
+    uvs.GUI.set_file_name(file_path)
+    uvs.GUI.process_file()
+    print(uvs.memory_dict["022"])
+
+    assert uvs.memory_dict["022"][1] == "000100"
+    assert uvs.memory_dict["026"][1] == "-000442"
+    assert uvs.accumulator[1] == "-000442"
 
 def test_load():
     '''load a word from a specific location in memory(val) into the accumulator'''
@@ -261,20 +278,19 @@ def test_branch1(tmpdir):
         f.write("+2003\n")
         f.write("+2110\n")
         f.write("+4010\n")
-        f.write("+3004\n")
+        f.write("+0304\n")
         f.write("+1200")
 
     with b.open() as f:
         content = f.read()
         # check for all the contents
-        assert content == "+2003\n+2110\n+4010\n+3004\n+1200"
+        assert content == "+2003\n+2110\n+4010\n+0304\n+1200"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
-
-    assert uvs.memory_dict["10"][1] == "3004"
-    assert uvs.accumulator == [False, "4204"]
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
+    assert uvs.memory_dict["010"][1] == "000304"
+    assert uvs.accumulator[1] == "000304"
 
 
 def test_branch2(tmpdir):
@@ -284,20 +300,20 @@ def test_branch2(tmpdir):
         f.write("+2150\n")
         f.write("+4050\n")
         f.write("+1200\n")
-        f.write("+3303")
+        f.write("+0303")
 
     with b.open() as f:
         content = f.read()
         # check for all the contents
-        assert content == "+2004\n+2150\n+4050\n+1200\n+3303"
+        assert content == "+2004\n+2150\n+4050\n+1200\n+0303"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
 
-    print(uvs.memory_dict["50"])
-    assert uvs.memory_dict["50"][1] == "3303"
-    assert uvs.accumulator == [False, "3963600"]
+    print(uvs.memory_dict["050"])
+    assert uvs.memory_dict["050"][1] == "000303"
+    assert uvs.accumulator[1] == "000303"
 
 
 def test_branch_neg1(tmpdir):
@@ -308,21 +324,21 @@ def test_branch_neg1(tmpdir):
         f.write("+2006\n")
         f.write("+3107\n")
         f.write("+4160\n")
-        f.write("+3000\n")
+        f.write("+0300\n")
         f.write("+1234\n")
         f.write("+5678\n")
 
     with b.open() as f:
         content = f.read()
         # check for all the contents
-        assert content == "+2005\n+2160\n+2006\n+3107\n+4160\n+3000\n+1234\n+5678\n"
+        assert content == "+2005\n+2160\n+2006\n+3107\n+4160\n+0300\n+1234\n+5678\n"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
 
-    assert uvs.memory_dict["60"][1] == "3000"
-    assert uvs.accumulator[1] == "-2439"
+    assert uvs.memory_dict["060"][1] == "000300"
+    assert uvs.accumulator[1] == "-004444"
 
 
 def test_branch_neg2(tmpdir):
@@ -336,19 +352,19 @@ def test_branch_neg2(tmpdir):
         f.write("+5678\n")
         f.write("+1234\n")
         f.write("+4300\n")
-        f.write("+3000\n")
+        f.write("-3000\n")
 
     with b.open() as f:
         content = f.read()
         # check for all the contents
-        assert content == "+2008\n+2170\n+2005\n+3106\n+4170\n+5678\n+1234\n+4300\n+3000\n"
+        assert content == "+2008\n+2170\n+2005\n+3106\n+4170\n+5678\n+1234\n+4300\n-3000\n"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
 
-    assert uvs.memory_dict["70"][1] == "3000"
-    assert uvs.accumulator[1] == "4444"
+    assert uvs.memory_dict["070"][1] == "003000"
+    assert uvs.accumulator[1] == "004444"
 
 
 def test_branch_zero1(tmpdir):
@@ -372,8 +388,8 @@ def test_branch_zero1(tmpdir):
     our_string = content.strip().split()
     uvs.initiate_process(our_string)
 
-    assert uvs.memory_dict["06"][1] == "1234"
-    assert uvs.accumulator[1] == "2005"
+    assert uvs.memory_dict["006"][1] == "001234"
+    assert uvs.accumulator[1] == "002005"
 
 
 def test_branch_zero1(tmpdir):
@@ -387,19 +403,19 @@ def test_branch_zero1(tmpdir):
         f.write("+1234\n")
         f.write("+1233\n")
         f.write("+4300\n")
-        f.write("+3000\n")
+        f.write("-3000\n")
 
     with b.open() as f:
         content = f.read()
         # check for all the contents
-        assert content == "+2008\n+2170\n+2005\n+3106\n+4270\n+1234\n+1233\n+4300\n+3000\n"
+        assert content == "+2008\n+2170\n+2005\n+3106\n+4270\n+1234\n+1233\n+4300\n-3000\n"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
 
-    assert uvs.memory_dict["70"][1] == "3000"
-    assert uvs.accumulator[1] == "0001"
+    assert uvs.memory_dict["070"][1] == "003000"
+    assert uvs.accumulator[1] == "000001"
 
 
 def test_branch_halt1(tmpdir):
@@ -416,11 +432,11 @@ def test_branch_halt1(tmpdir):
         assert content == "+4300\n+3002\n+2100\n+0000\n"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
 
-    assert uvs.memory_dict["02"][1] == "2100"
-    assert uvs.accumulator[1] == "0000"
+    assert uvs.memory_dict["002"][1] == "021000"
+    assert uvs.accumulator[1] == "000000"
 
 
 def test_branch_halt2(tmpdir):
@@ -428,18 +444,18 @@ def test_branch_halt2(tmpdir):
     with b.open('w') as f:
         f.write("+2004\n")
         f.write("+4300\n")
-        f.write("+2005\n")
+        f.write("-2005\n")
         f.write("+1234\n")
         f.write("+5678\n")
 
     with b.open() as f:
         content = f.read()
         # check for all the contents
-        assert content == "+2004\n+4300\n+2005\n+1234\n+5678\n"
+        assert content == "+2004\n+4300\n-2005\n+1234\n+5678\n"
 
     uvs = UVSim(test_bool=True)
-    our_string = content.strip().split()
-    uvs.initiate_process(our_string)
+    uvs.GUI.set_file_name(b)
+    uvs.GUI.process_file()
 
-    assert uvs.memory_dict["02"][1] == "2005"
-    assert uvs.accumulator[1] == "5678"
+    assert uvs.memory_dict["002"][1] == "002005"
+    assert uvs.accumulator[1] == "005678"
