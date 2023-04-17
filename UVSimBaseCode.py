@@ -6,7 +6,9 @@ class UVSim():
         # dict entries are like: register_number(string): [DataBool(bool), contents(string)]. DataBool indicates whether
         # the contents are a value or not. if it is false, the contents are an instruction. if it is true, the contents
         # should be ignored.
+        self.register_limit = 250
         self.test_bool = test_bool
+        self.instruction_list = ["010", "011", "020", "021", "030", "031", "032", "033", "040", "041", "042", "043"]
         self.memory_dict = {}
         self.accumulator = [False, "000000"]
         self.instruction_amount = 0
@@ -19,11 +21,11 @@ class UVSim():
     def initialize_memory(self):
         if self.test_bool is False:
             self.GUI.insert_output("Initializing Memory...")
-        for i in range(250):  # initiallizes our co
+        for i in range(self.register_limit):  # initiallizes our co
             our_key = i
             if i <= 9:
                 our_key = "00" + str(our_key)
-            elif i >9 and i<100:
+            elif i > 9 and i < 100:
                 our_key = "0" + str(our_key)
             else:
                 our_key = str(our_key)
@@ -31,17 +33,14 @@ class UVSim():
         if self.test_bool is False:
             self.GUI.insert_output("Memory Set!")
 
-
     def initiate_process(self, input_text):
         # loads each instruction into the corresponding register
         for item in range(len(input_text)):
             if len(input_text[item]) != 7:
-                print(input_text)
                 # if it is greater or less than 5, then it is not something our program should recognize. we need
                 # to throw a warning or something.
-                print(input_text[item], " is an invalid command!16")
-                self.GUI.insert_output(input_text[item] + " is an invalid command!")
                 # not sure if we should exit here or continue forward. I'll ask you guys.
+                pass
             elif input_text[item][0] == "-" or input_text[item][0] == "+":
                 if input_text[item][0] == "-":
                     temp_bool = False
@@ -53,7 +52,7 @@ class UVSim():
                         self.memory_dict["00" + str(item)] = [temp_bool, input_text[item][1:7]]
                         self.instruction_amount += 1
                     if item > 9 and item < 100:
-                        self.memory_dict["0" + str(item)] = [temp_bool, input_text[item][1 :7]]
+                        self.memory_dict["0" + str(item)] = [temp_bool, input_text[item][1:7]]
                         self.instruction_amount += 1
                     else:
                         self.memory_dict[str(item)] = [temp_bool, input_text[item][1:7]]
@@ -62,7 +61,7 @@ class UVSim():
                     self.GUI.insert_output(input_text[str(item)] + " is an invalid command!")
                     print(input_text[str(item)], " is an invalid command! 31")
             else:
-                self.GUI.insert_output(input_text[item] + " is an invalid command!")
+                self.GUI.insert_output(input_text[item] + " is an invalid command! Must have a + or -")
                 print(input_text[item], " is an invalid command!33")
         # begins to process each instruction
 
