@@ -6,15 +6,20 @@ from io import StringIO
 import pytest
 
 
-def test_all():
+def test_all(tmpdir):
     '''
     tests all functions
     :return:
     '''
     uvs = UVSimBaseCode.UVSim(test_bool=True)
-    file_path = r"C:\Users\Sarah\Desktop\sarah\School\2023\Spring 2023\CS 2450\UVSim\TestAll1.txt"  # whatever our file path is
-    uvs.GUI.set_file_name(file_path)
-    our_string = uvs.GUI.input_validation(file_path).strip().split()
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write("+0053\n+0153\n+0500\n+0020\n+2001\n+3100\n+2122\n+1122\n+2002\n+3222\n+3102\n+4114\n+3303\n+4300\n+3000\n+2126\n+1126\n+4223\n+4023\n+3000\n+0000\n+4300\n+4300\n+4300")
+    with b.open() as f:
+        content = f.read()
+        # check for all the contents
+        assert content == "+0053\n+0153\n+0500\n+0020\n+2001\n+3100\n+2122\n+1122\n+2002\n+3222\n+3102\n+4114\n+3303\n+4300\n+3000\n+2126\n+1126\n+4223\n+4023\n+3000\n+0000\n+4300\n+4300\n+4300"
+    uvs.GUI.set_file_name(b)
     uvs.GUI.process_file()
     print(uvs.memory_dict["022"])
 
@@ -23,14 +28,22 @@ def test_all():
     assert uvs.accumulator[1] == "-000442"
 
 
-def test_all_updated():
+def test_all_updated(tmpdir):
     '''
     tests all functions
     :return:
     '''
     uvs = UVSimBaseCode.UVSim(test_bool=True)
-    file_path = r"C:\Users\Sarah\Desktop\sarah\School\2023\Spring 2023\CS 2450\UVSim\TestAll1Updated.txt"  # whatever our file path is
-    uvs.GUI.set_file_name(file_path)
+    b = tmpdir.join("test_branch1.txt")
+    with b.open('w') as f:
+        f.write(
+            "+000053\n+000153\n+000500\n+000020\n+020001\n+031000\n+021022\n+011022\n+020002\n+032022\n+031002\n+041014\n+033003\n+043000\n+030000\n+021026\n+011026\n+042023\n+040023\n+030000\n+000000\n+043000\n+043000\n+043000")
+    with b.open() as f:
+        content = f.read()
+        # check for all the contents
+        assert content == "+000053\n+000153\n+000500\n+000020\n+020001\n+031000\n+021022\n+011022\n+020002\n+032022\n+031002\n+041014\n+033003\n+043000\n+030000\n+021026\n+011026\n+042023\n+040023\n+030000\n+000000\n+043000\n+043000\n+043000"
+
+    uvs.GUI.set_file_name(b)
     uvs.GUI.process_file()
     print(uvs.memory_dict["022"])
 
