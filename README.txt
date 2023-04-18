@@ -16,9 +16,11 @@ The program will run your instructions given by the chosen .txt file and prompt 
 
 To change the colors of the GUI, click File > Color Preferences. This will open up a menu showing the current colors and the options available. Simply select the one you'd like to change and pick a color from the menu. Click "Reset to Default" to change the colors back to the default UVU colors.
 
-To edit an instruction file, click "Edit File:". This will allow you to choose a file to edit and open up a menu with a text box for you to modify up to 250 lines of instructions for the UVSim. You will then save the file and it will be available to choose for processing. You can also run it immediately by clicking "Save and Run". 
+To edit an instruction file, click "Edit File:". This will allow you to choose a file from your file system to edit in the UVSim interface. 
 
-To create a new instruction file, click the "New File:" button, enter in your instructions, and click "Save File". You may have multiple files open at the same time to modify.
+To create a new instruction file in the UVSim interface, click the "New File:" button.
+
+After clicking either "Edit File:" or "New File:", a window will open with a text box for you to modify up to 250 lines of instructions for the UVSim. If you save the file, it will be available in your file system to choose for processing. You can also run it immediately by clicking "Save and Run" or "Run File". You may have multiple files open at the same time to modify and process. To open another file, click "Edit File:" (if you want to open an existing file) or "New File:" (if you want to create a new one) and another window will appear allowing you to modify that file. Each window represents its own file. With multiple file windows open, click any of the options on the corresponding window to select it for that specific file.
 
 example.txt :
 -------------------------------------------------------------
