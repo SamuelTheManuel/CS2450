@@ -51,7 +51,7 @@ class UVSim():
                     if item <= 9:
                         self.memory_dict["00" + str(item)] = [temp_bool, input_text[item][1:7]]
                         self.instruction_amount += 1
-                    if item > 9 and item < 100:
+                    elif item > 9 and item < 100:
                         self.memory_dict["0" + str(item)] = [temp_bool, input_text[item][1:7]]
                         self.instruction_amount += 1
                     else:
@@ -66,7 +66,7 @@ class UVSim():
         # begins to process each instruction
 
         instruction_line = 0  # index for the instruction we're on
-        while instruction_line < 250:
+        while instruction_line < self.register_limit:
             temp_reg = str(instruction_line)
             if instruction_line <= 9:
                 temp_instruction = self.memory_dict[f"00{instruction_line}"]
@@ -149,9 +149,6 @@ class UVSim():
 
         instruction_line += 1  # incrament the instruction line to go to next instruction
         return instruction_line
-
-    # validates input from user. if it is not a valid file path, it asks for a new file path.
-
 
     def Load(self, val):
         '''load a word from a specific location in memory(val) into the accumulator'''
