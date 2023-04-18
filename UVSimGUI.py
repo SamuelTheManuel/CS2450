@@ -300,17 +300,17 @@ class UVSimGUI:
         self.edit_file()
 
     def edit_file(self):
-        self.input_widget = Toplevel(self.our_window)
-        self.input_widget.title(self.cut_file_name)
-        self.input_widget.geometry("400x350")
-        self.input_widget.configure(background="#ffffff")
+        input_widget = Toplevel(self.our_window)
+        input_widget.title(self.cut_file_name)
+        input_widget.geometry("400x350")
+        input_widget.configure(background="#ffffff")
         # self.input_widget.grab_set()
 
-        v = Scrollbar(self.input_widget, orient="vertical")
-        self.file_edit = Text(self.input_widget, font=("Constantia", 10), yscrollcommand=v.set,
+        v = Scrollbar(input_widget, orient="vertical")
+        self.file_edit = Text(input_widget, font=("Constantia", 10), yscrollcommand=v.set,
                               background=self.output_bg, foreground=self.output_text, width=35, height=14)
         v.config(command=self.file_edit.yview)
-        self.line_num = Label(self.input_widget,
+        self.line_num = Label(input_widget,
                               text=("Line: " + str(int(self.file_edit.index(INSERT).split(".")[0]) - 1)),
                               foreground=self.primary_color, background=self.text_color)
 
@@ -326,37 +326,36 @@ class UVSimGUI:
         self.style_dict.append([self.our_output, "OutputBg", "OutputText"])
 
         # save File Button
-        self.save_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+        save_file_button = Button(input_widget, background=self.secondary_color, foreground=self.text_color,
                                        command=self.SetupSaveFile, text="Save as")
-        self.save_file_button.bind("<Enter>", self.on_enter)
-        self.save_file_button.bind("<Leave>", self.on_exit)
-        self.save_file_button.pack()
-        self.style_dict.append([self.save_file_button, "Secondary", "Text"])
+        save_file_button.bind("<Enter>", self.on_enter)
+        save_file_button.bind("<Leave>", self.on_exit)
+        save_file_button.pack()
+        self.style_dict.append([save_file_button, "Secondary", "Text"])
 
-        self.run_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+        run_file_button = Button(input_widget, background=self.secondary_color, foreground=self.text_color,
                                        command=self.RunFile, text="Run File")
-        self.run_file_button.bind("<Enter>", self.on_enter)
-        self.run_file_button.bind("<Leave>", self.on_exit)
-        self.run_file_button.pack()
-        self.style_dict.append([self.run_file_button, "Secondary", "Text"])
+        run_file_button.bind("<Enter>", self.on_enter)
+        run_file_button.bind("<Leave>", self.on_exit)
+        run_file_button.pack()
+        self.style_dict.append([run_file_button, "Secondary", "Text"])
 
         # save and run button
-        self.save_and_run = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
-                                    text="Save and Run",
-                                    command=self.save_and_run)
-        self.save_and_run.bind("<Enter>", self.on_enter)
-        self.save_and_run.bind("<Leave>", self.on_exit)
-        self.save_and_run.pack()
+        save_and_run = Button(input_widget, background=self.secondary_color, foreground=self.text_color,
+                                    text="Save and Run", command=self.save_and_run)
+        save_and_run.bind("<Enter>", self.on_enter)
+        save_and_run.bind("<Leave>", self.on_exit)
+        save_and_run.pack()
         self.style_dict.append([self.save_and_run, "Secondary", "Text"])
 
         # cancel Button
-        self.cancel_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
+        cancel_button = Button(input_widget, background=self.secondary_color, foreground=self.text_color,
                                     text="Cancel",
-                                    command=self.input_widget.destroy)
-        self.cancel_button.bind("<Enter>", self.on_enter)
-        self.cancel_button.bind("<Leave>", self.on_exit)
-        self.cancel_button.pack()
-        self.style_dict.append([self.cancel_button, "Secondary", "Text"])
+                                    command=input_widget.destroy)
+        cancel_button.bind("<Enter>", self.on_enter)
+        cancel_button.bind("<Leave>", self.on_exit)
+        cancel_button.pack()
+        self.style_dict.append([cancel_button, "Secondary", "Text"])
 
         try:
             with open(self.filename, "r") as file:
@@ -395,12 +394,14 @@ class UVSimGUI:
         else:
             if self.filename == "":
                 self.filename = tempfile.gettempdir() + "\\UVSIM_TEMP_FILE_TO_RUN.txt"
+                print("line 397")
             try:
                 with open(self.filename, "w") as f:
                     f.write(self.file_edit.get(1.0, END))
                     self.filename = f.name
                     self.our_label.configure(text="Selected File: " + self.filename)
                     self.insert_output("----------------------" + "\nSelected File: " + self.filename + "\n")
+                    print("line 404")
                     return True
             except AttributeError:
                 self.ErrorMessageSave("Error in save: cannot run")
@@ -416,10 +417,9 @@ class UVSimGUI:
         self.open_file_dialogue = False
         if self.SaveFile():
             self.process_file()
-            self.input_widget.destroy()
 
     def ErrorMessageSave(self, ourText):
-        self.Error_message = Toplevel(self.input_widget)
+        self.Error_message = Toplevel(self.our_window)
 
         self.Error_message.configure(background="#ffffff")
         self.Error_message.title("Warning!")
@@ -501,5 +501,6 @@ class UVSimGUI:
         self.open_file_dialogue = False
         if self.SaveFile():
             self.process_file()
+            print("done")
         else:
             self.ErrorMessageSave("Error with save!")
