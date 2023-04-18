@@ -38,7 +38,7 @@ example.txt :
 In the above example, the -0099999 would be an invalid input and skipped over. 
 
 Instructions:
-Instructions must be preceded by a +. The first three digits specify the operation to be performed. The last three digits specify the memory location on which the operation is performed. Ex. +010030 will read a word from the keyboard into memory location 030.
+Instructions must be preceded by a '+'. The first three digits specify the operation to be performed. The last three digits specify the memory location on which the operation is performed. Ex. +010030 will read a word from the keyboard into memory location 030. If you are inputting a value whose first three digits are already assigned to an instruction operation, specify that the word is a value (not an instruction) by preceding it with a '-'.
 
 READ = 010 Read a word from the keyboard into a specific location in memory.
 WRITE = 011 Write a word from a specific location in memory to screen.
