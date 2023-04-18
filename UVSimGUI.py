@@ -20,6 +20,7 @@ class UVSimGUI:
         self.test_bool = test_bool
         self.style_dict = []
         self.cut_file_name = ""
+        self.open_file_dialogue = False
 
         self.default_primary_color = "#78be20"
         self.default_secondary_color = "#275D38"
@@ -210,8 +211,8 @@ class UVSimGUI:
     def Read(self, register):
         # instrucion 010 Read a word from the keyboard into a specific location in memory.
         # A word is a signed four-digit decimal number, such as +1234, -5678.
-        if int(register) > 250:
-            print("invalid register number. Resgister limit 250")
+        if int(register) > self.line_limit:
+            print("invalid register number. Register limit 250")
         else:
             if self.test_bool is False:
                 self.user_input_setup()
@@ -270,7 +271,7 @@ class UVSimGUI:
         for item in range(len(input)):
             found = False
             for entry in range(len(self.instruction_list)):
-                if self.instruction_list[entry] in input[item][1:3] and input[item][0] is not "-":
+                if self.instruction_list[entry] in input[item][1:3] and input[item][0] != "-":
                     found = True
             if found and len(input[item]) != 7:
                 input[item] = input[item][:3] + '0' + input[item][3:]
@@ -279,7 +280,6 @@ class UVSimGUI:
                 if len(input[item]) != 7:
                     input[item] = input[item][:1] + '00' + input[item][1:]
         return input
-
 
     def on_enter(self, e):
         e.widget["foreground"], e.widget["background"] = e.widget["background"], e.widget["foreground"]
@@ -290,11 +290,13 @@ class UVSimGUI:
     def new_file(self):
         self.filename = ""
         self.cut_file_name = "Edit File: "
+        self.open_file_dialogue = True
         self.edit_file()
 
     def edit_file_setup(self):
         self.select_file()
         self.cut_file_name = os.path.basename(self.filename)
+        self.open_file_dialogue = False
         self.edit_file()
 
     def edit_file(self):
@@ -325,7 +327,7 @@ class UVSimGUI:
 
         # save File Button
         self.save_file_button = Button(self.input_widget, background=self.secondary_color, foreground=self.text_color,
-                                       command=self.SaveFile, text="Save File")
+                                       command=self.SetupSaveFile, text="Save as")
         self.save_file_button.bind("<Enter>", self.on_enter)
         self.save_file_button.bind("<Leave>", self.on_exit)
         self.save_file_button.pack()
@@ -364,8 +366,12 @@ class UVSimGUI:
         except FileNotFoundError or Exception:
             pass
 
-    def SaveFile(self, openfiledialogue):
-        if(openfiledialogue):
+    def SetupSaveFile(self):
+        self.open_file_dialogue = True
+        self.SaveFile()
+
+    def SaveFile(self):
+        if self.open_file_dialogue:
             nlCount = 0
             lyst = self.file_edit.get(1.0, END)
             for line in lyst:
@@ -407,8 +413,10 @@ class UVSimGUI:
             self.file_edit.mark_set("insert", "%d.%d" % (0, 0))
 
     def RunFile(self):
-        if self.SaveFile(False):
+        self.open_file_dialogue = False
+        if self.SaveFile():
             self.process_file()
+            self.input_widget.destroy()
 
     def ErrorMessageSave(self, ourText):
         self.Error_message = Toplevel(self.input_widget)
@@ -490,7 +498,8 @@ class UVSimGUI:
         self.output_text_button.pack()
 
     def save_and_run(self):
-        if (self.SaveFile(True)):
+        self.open_file_dialogue = False
+        if self.SaveFile():
             self.process_file()
         else:
             self.ErrorMessageSave("Error with save!")
